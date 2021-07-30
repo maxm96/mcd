@@ -6,7 +6,7 @@
 
     <link rel="stylesheet" type="text/css" href="{{ asset('css/app.css') }}">
 
-    <title>Laravel</title>
+    <title>mcd</title>
 </head>
 <body>
 <div class="top-bar">
