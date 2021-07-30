@@ -31,3 +31,5 @@ Route::get('/chat', function () {
 Route::get('/boards', function () {
     return 'Boards';
 })->name('boards');
+
+include __DIR__ . '/auth.php';
