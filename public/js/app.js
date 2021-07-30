@@ -1854,9 +1854,35 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "Post",
-  props: ['post']
+  props: ['post'],
+  data: function data() {
+    return {
+      collapsed: false
+    };
+  },
+  methods: {
+    toggleCollapsed: function toggleCollapsed() {
+      this.collapsed = !this.collapsed;
+    }
+  }
 });
 
 /***/ }),
@@ -2036,7 +2062,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.post[data-v-5e8280ea] {\n    text-align: left;\n    width: 20%;\n    margin: 0 auto;\n    background-color: lightgrey;\n    border-radius: 5px;\n    padding: 5px;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.post[data-v-5e8280ea] {\n    text-align: left;\n    width: 20%;\n    margin: 0 auto;\n    background-color: lightgrey;\n    border-radius: 5px;\n    padding: 5px;\n}\n.collapse[data-v-5e8280ea], .expand[data-v-5e8280ea] {\n    float: right;\n    margin-bottom: -20px;\n}\n.collapse > a[data-v-5e8280ea], .expand > a[data-v-5e8280ea] {\n    cursor: pointer;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -20092,15 +20118,41 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "post" }, [
-    _c("h4", { staticClass: "post-title" }, [_vm._v(_vm._s(_vm.post.title))]),
+    _vm.collapsed
+      ? _c("span", { staticClass: "expand" }, [
+          _vm._v("\n        ["),
+          _c("a", { on: { click: _vm.toggleCollapsed } }, [
+            _vm._v("\n            +\n        ")
+          ]),
+          _vm._v("]\n    ")
+        ])
+      : _c("span", { staticClass: "collapse" }, [
+          _vm._v("\n        ["),
+          _c("a", { on: { click: _vm.toggleCollapsed } }, [
+            _vm._v("\n            −\n        ")
+          ]),
+          _vm._v("]\n    ")
+        ]),
     _vm._v(" "),
-    _c("p", { staticClass: "post-content" }, [
-      _vm._v(_vm._s(_vm.post.content))
-    ]),
-    _vm._v(" "),
-    _c("hr"),
-    _vm._v(" "),
-    _c("span", [_vm._v("Submitted by: " + _vm._s(_vm.post.author))])
+    _vm.collapsed
+      ? _c("div", { staticClass: "collapsed" }, [
+          _c("h4", { staticClass: "post-title" }, [
+            _vm._v(_vm._s(_vm.post.title))
+          ])
+        ])
+      : _c("div", { staticClass: "expanded" }, [
+          _c("h4", { staticClass: "post-title" }, [
+            _vm._v(_vm._s(_vm.post.title))
+          ]),
+          _vm._v(" "),
+          _c("p", { staticClass: "post-content" }, [
+            _vm._v(_vm._s(_vm.post.content))
+          ]),
+          _vm._v(" "),
+          _c("hr"),
+          _vm._v(" "),
+          _c("span", [_vm._v("Submitted by: " + _vm._s(_vm.post.author))])
+        ])
   ])
 }
 var staticRenderFns = []
