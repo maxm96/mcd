@@ -1991,7 +1991,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n#posts[data-v-42ea8a27] {\n    height: 100%;\n    width: 100%;\n    text-align: center;\n}\n#submit-post[data-v-42ea8a27] {\n    display: flex;\n    flex-direction: column;\n    width: 20%;\n    margin: 0 auto;\n}\n#create-post-link[data-v-42ea8a27] {\n    width: 20%;\n    margin: 0 auto;\n    cursor: pointer;\n}\n.action-buttons[data-v-42ea8a27] {\n    margin-top: 10px;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n#posts[data-v-42ea8a27] {\n    height: 100%;\n    width: 100%;\n    text-align: center;\n}\n#submit-post[data-v-42ea8a27] {\n    display: flex;\n    flex-direction: column;\n    width: 20%;\n    margin: 0 auto;\n}\n#create-post-link[data-v-42ea8a27] {\n    width: 20%;\n    margin: 0 auto;\n}\n#create-post-link > a[data-v-42ea8a27] {\n    cursor: pointer;\n}\n.action-buttons[data-v-42ea8a27] {\n    margin-top: 10px;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

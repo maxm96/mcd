@@ -94,6 +94,9 @@ export default {
 #create-post-link {
     width: 20%;
     margin: 0 auto;
+}
+
+#create-post-link > a {
     cursor: pointer;
 }
 
