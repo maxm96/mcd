@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,12 +15,12 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect(route('home'));
 });
 
-Route::get('/home', function () {
-    return 'Home';
-})->name('home');
+Route::get('/home', [HomeController::class, 'index'])->name('home');
+Route::get('/home/get_posts', [HomeController::class, 'getPosts'])->name('home.get_posts');
+Route::post('/home', [HomeController::class, 'submitPost'])->name('home.submit_post');
 
 Route::get('/chat', function () {
     return 'Chat';

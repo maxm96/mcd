@@ -32,5 +32,7 @@
 <div class="footer">
     @yield('footer')
 </div>
+
+@yield('javascript')
 </body>
 </html>
