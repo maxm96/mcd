@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PostRequest;
 use App\Models\Post;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -17,17 +18,23 @@ class HomeController extends Controller
         return Post::all();
     }
 
-    public function submitPost(Request $request)
+    public function submitPost(PostRequest $request)
     {
         $post = new Post();
         $post->title = $request->input('title');
         $post->content = $request->input('content');
-        $post->author = $request->input('author');
+        $post->author = Auth::user() ? Auth::user()->username : 'Anonymous';
 
         if (!$post->save()) {
             return response('Failed to save post', 500);
         }
 
-        return response('OK');
+        return response()->json([
+            'post' => [
+                'title' => $post->title,
+                'content' => $post->content,
+                'author' => $post->author,
+            ]
+        ]);
     }
 }

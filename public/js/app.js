@@ -1878,9 +1878,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "PostsPage",
   data: function data() {
@@ -1888,7 +1885,6 @@ __webpack_require__.r(__webpack_exports__);
       posts: [],
       title: '',
       content: '',
-      author: '',
       loading: false,
       errorMessage: '',
       showPostForm: false
@@ -1898,7 +1894,23 @@ __webpack_require__.r(__webpack_exports__);
     onCreatePostLinkClick: function onCreatePostLinkClick() {
       this.showPostForm = !this.showPostForm;
     },
-    onSubmitClick: function onSubmitClick() {},
+    onSubmitClick: function onSubmitClick() {
+      var _this = this;
+
+      this.loading = true;
+      var payload = {
+        title: this.title,
+        content: this.content
+      };
+      axios.post('/home', payload).then(function (res) {
+        _this.posts.push(res.data.post);
+      })["catch"](function (err) {
+        console.error(err);
+        _this.errorMessage = "Failed to save post: ".concat(err);
+      })["finally"](function () {
+        return _this.loading = false;
+      });
+    },
     onClearClick: function onClearClick() {
       // Don't clear author
       this.title = '';
@@ -1906,16 +1918,16 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   mounted: function mounted() {
-    var _this = this;
+    var _this2 = this;
 
     this.loading = true;
     axios.get('/home/get_posts').then(function (res) {
-      _this.posts = res.data;
+      _this2.posts = res.data;
     })["catch"](function (err) {
       console.error(err);
-      _this.message = "Failed to fetch posts: ".concat(err);
+      _this2.message = "Failed to fetch posts: ".concat(err);
     })["finally"](function () {
-      return _this.loading = false;
+      return _this2.loading = false;
     });
   }
 });
@@ -19984,29 +19996,6 @@ var render = function() {
                   return
                 }
                 _vm.content = $event.target.value
-              }
-            }
-          }),
-          _vm._v(" "),
-          _c("label", { attrs: { for: "author" } }, [_vm._v("Username")]),
-          _vm._v(" "),
-          _c("input", {
-            directives: [
-              {
-                name: "model",
-                rawName: "v-model",
-                value: _vm.author,
-                expression: "author"
-              }
-            ],
-            attrs: { type: "text", id: "author" },
-            domProps: { value: _vm.author },
-            on: {
-              input: function($event) {
-                if ($event.target.composing) {
-                  return
-                }
-                _vm.author = $event.target.value
               }
             }
           }),

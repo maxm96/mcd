@@ -23,9 +23,6 @@
             <label for="content">Post</label>
             <textarea id="content" v-model="content"></textarea>
 
-            <label for="author">Username</label>
-            <input type="text" id="author" v-model="author">
-
             <span class="action-buttons">
                 <button @click="onSubmitClick">Submit</button>
                 <button @click="onClearClick">Clear</button>
@@ -42,7 +39,6 @@ export default {
             posts: [],
             title: '',
             content: '',
-            author: '',
             loading: false,
             errorMessage: '',
             showPostForm: false,
@@ -53,7 +49,19 @@ export default {
             this.showPostForm = !this.showPostForm
         },
         onSubmitClick() {
+            this.loading = true
 
+            let payload = { title: this.title, content: this.content, }
+
+            axios.post('/home', payload)
+                .then((res) => {
+                    this.posts.push(res.data.post)
+                })
+                .catch((err) => {
+                    console.error(err)
+                    this.errorMessage = `Failed to save post: ${err}`
+                })
+                .finally(() => this.loading = false)
         },
         onClearClick() {
             // Don't clear author
