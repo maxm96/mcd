@@ -18,14 +18,14 @@
         </div>
         <div v-if="showPostForm" id="submit-post">
             <label for="title">Title</label>
-            <input id="title" type="text" v-model="title">
+            <input id="title" type="text" v-model="title" :disabled="loading">
 
             <label for="content">Post</label>
-            <textarea id="content" v-model="content"></textarea>
+            <textarea id="content" v-model="content" :disabled="loading"></textarea>
 
             <span class="action-buttons">
-                <button @click="onSubmitClick">Submit</button>
-                <button @click="onClearClick">Clear</button>
+                <button @click="onSubmitClick" :disabled="loading">Submit</button>
+                <button @click="onClearClick" :disabled="loading">Clear</button>
             </span>
         </div>
     </div>
@@ -56,6 +56,13 @@ export default {
             axios.post('/home', payload)
                 .then((res) => {
                     this.posts.push(res.data.post)
+
+                    // Clear form
+                    this.title = ''
+                    this.content = ''
+
+                    // Hide form
+                    this.showPostForm = false
                 })
                 .catch((err) => {
                     console.error(err)
@@ -64,7 +71,6 @@ export default {
                 .finally(() => this.loading = false)
         },
         onClearClick() {
-            // Don't clear author
             this.title = ''
             this.content = ''
         },

@@ -1903,7 +1903,13 @@ __webpack_require__.r(__webpack_exports__);
         content: this.content
       };
       axios.post('/home', payload).then(function (res) {
-        _this.posts.push(res.data.post);
+        _this.posts.push(res.data.post); // Clear form
+
+
+        _this.title = '';
+        _this.content = ''; // Hide form
+
+        _this.showPostForm = false;
       })["catch"](function (err) {
         console.error(err);
         _this.errorMessage = "Failed to save post: ".concat(err);
@@ -1912,7 +1918,6 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     onClearClick: function onClearClick() {
-      // Don't clear author
       this.title = '';
       this.content = '';
     }
@@ -19965,7 +19970,7 @@ var render = function() {
                 expression: "title"
               }
             ],
-            attrs: { id: "title", type: "text" },
+            attrs: { id: "title", type: "text", disabled: _vm.loading },
             domProps: { value: _vm.title },
             on: {
               input: function($event) {
@@ -19988,7 +19993,7 @@ var render = function() {
                 expression: "content"
               }
             ],
-            attrs: { id: "content" },
+            attrs: { id: "content", disabled: _vm.loading },
             domProps: { value: _vm.content },
             on: {
               input: function($event) {
@@ -20001,11 +20006,23 @@ var render = function() {
           }),
           _vm._v(" "),
           _c("span", { staticClass: "action-buttons" }, [
-            _c("button", { on: { click: _vm.onSubmitClick } }, [
-              _vm._v("Submit")
-            ]),
+            _c(
+              "button",
+              {
+                attrs: { disabled: _vm.loading },
+                on: { click: _vm.onSubmitClick }
+              },
+              [_vm._v("Submit")]
+            ),
             _vm._v(" "),
-            _c("button", { on: { click: _vm.onClearClick } }, [_vm._v("Clear")])
+            _c(
+              "button",
+              {
+                attrs: { disabled: _vm.loading },
+                on: { click: _vm.onClearClick }
+              },
+              [_vm._v("Clear")]
+            )
           ])
         ])
       : _vm._e()
