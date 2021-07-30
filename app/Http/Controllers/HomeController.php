@@ -29,8 +29,12 @@ class HomeController extends Controller
             return response('Failed to save post', 500);
         }
 
+        // Get the id
+        $post->refresh();
+
         return response()->json([
             'post' => [
+                'id' => $post->id,
                 'title' => $post->title,
                 'content' => $post->content,
                 'author' => $post->author,

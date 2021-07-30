@@ -3,13 +3,9 @@
         <span v-if="errorMessage.length" id="error">{{ errorMessage }}</span>
         <div id="posts">
             <p v-if="!posts.length">No posts yet ...</p>
-            <ul v-else>
-                <li v-for="post in posts">
-                    <h4>{{ post.title }}</h4>
-                    <p>{{ post.content }}</p>
-                    <p>Submitted by: {{ post.author }}</p>
-                </li>
-            </ul>
+            <div v-else>
+                <post v-for="post in posts" :key="post.id" :post="post"></post>
+            </div>
         </div>
         <div id="create-post-link">
             <a @click="onCreatePostLinkClick">
@@ -32,8 +28,11 @@
 </template>
 
 <script>
+import Post from "./Post"
+
 export default {
     name: "PostsPage",
+    components: { Post },
     data() {
         return {
             posts: [],
@@ -84,7 +83,7 @@ export default {
             })
             .catch((err) => {
                 console.error(err)
-                this.message = `Failed to fetch posts: ${err}`
+                this.errorMessage = `Failed to fetch posts: ${err}`
             })
             .finally(() => this.loading = false)
     },
@@ -96,6 +95,7 @@ export default {
     height: 100%;
     width: 100%;
     text-align: center;
+    margin-top: 10px;
 }
 
 #submit-post {
@@ -107,7 +107,7 @@ export default {
 
 #create-post-link {
     width: 20%;
-    margin: 0 auto;
+    margin: 20px auto;
 }
 
 #create-post-link > a {
