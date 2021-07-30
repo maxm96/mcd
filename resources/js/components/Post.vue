@@ -44,7 +44,7 @@ export default {
 .post {
     text-align: left;
     width: 20%;
-    margin: 0 auto;
+    margin: 10px auto;
     background-color: lightgrey;
     border-radius: 5px;
     padding: 5px;

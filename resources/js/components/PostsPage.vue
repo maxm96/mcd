@@ -15,9 +15,11 @@
         <div v-if="showPostForm" id="submit-post">
             <label for="title">Title</label>
             <input id="title" type="text" v-model="title" :disabled="loading">
+            <span v-if="errors.title.length" class="error">{{ errors.title }}</span>
 
             <label for="content">Post</label>
             <textarea id="content" v-model="content" :disabled="loading"></textarea>
+            <span v-if="errors.content.length" class="error">{{ errors.content }}</span>
 
             <span class="action-buttons">
                 <button @click="onSubmitClick" :disabled="loading">Submit</button>
@@ -41,13 +43,45 @@ export default {
             loading: false,
             errorMessage: '',
             showPostForm: false,
+            errors: {
+                title: '',
+                content: '',
+            },
         }
     },
     methods: {
         onCreatePostLinkClick() {
             this.showPostForm = !this.showPostForm
         },
+        validatePost() {
+            let pass = true
+
+            // Trim inputs
+            this.title = this.title.trim()
+            this.content = this.content.trim()
+
+            // Validate that inputs are not empty
+            if (this.title.length < 1) {
+                this.errors.title = 'The title cannot be empty'
+                pass = false
+            } else {
+                this.errors.title = ''
+            }
+
+            if (this.content.length < 1) {
+                this.errors.content = 'The post cannot be empty'
+                pass = false
+            } else {
+                this.errors.content = ''
+            }
+
+            return pass
+        },
         onSubmitClick() {
+            if (!this.validatePost()) {
+                return
+            }
+
             this.loading = true
 
             let payload = { title: this.title, content: this.content, }
@@ -116,5 +150,10 @@ export default {
 
 .action-buttons {
     margin-top: 10px;
+}
+
+.error {
+    color: #c30000;
+    font-size: 16px;
 }
 </style>

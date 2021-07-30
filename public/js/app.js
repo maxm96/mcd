@@ -1928,6 +1928,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "PostsPage",
@@ -1941,15 +1943,45 @@ __webpack_require__.r(__webpack_exports__);
       content: '',
       loading: false,
       errorMessage: '',
-      showPostForm: false
+      showPostForm: false,
+      errors: {
+        title: '',
+        content: ''
+      }
     };
   },
   methods: {
     onCreatePostLinkClick: function onCreatePostLinkClick() {
       this.showPostForm = !this.showPostForm;
     },
+    validatePost: function validatePost() {
+      var pass = true; // Trim inputs
+
+      this.title = this.title.trim();
+      this.content = this.content.trim(); // Validate that inputs are not empty
+
+      if (this.title.length < 1) {
+        this.errors.title = 'The title cannot be empty';
+        pass = false;
+      } else {
+        this.errors.title = '';
+      }
+
+      if (this.content.length < 1) {
+        this.errors.content = 'The post cannot be empty';
+        pass = false;
+      } else {
+        this.errors.content = '';
+      }
+
+      return pass;
+    },
     onSubmitClick: function onSubmitClick() {
       var _this = this;
+
+      if (!this.validatePost()) {
+        return;
+      }
 
       this.loading = true;
       var payload = {
@@ -2062,7 +2094,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.post[data-v-5e8280ea] {\n    text-align: left;\n    width: 20%;\n    margin: 0 auto;\n    background-color: lightgrey;\n    border-radius: 5px;\n    padding: 5px;\n}\n.collapse[data-v-5e8280ea], .expand[data-v-5e8280ea] {\n    float: right;\n    margin-bottom: -20px;\n}\n.collapse > a[data-v-5e8280ea], .expand > a[data-v-5e8280ea] {\n    cursor: pointer;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.post[data-v-5e8280ea] {\n    text-align: left;\n    width: 20%;\n    margin: 10px auto;\n    background-color: lightgrey;\n    border-radius: 5px;\n    padding: 5px;\n}\n.collapse[data-v-5e8280ea], .expand[data-v-5e8280ea] {\n    float: right;\n    margin-bottom: -20px;\n}\n.collapse > a[data-v-5e8280ea], .expand > a[data-v-5e8280ea] {\n    cursor: pointer;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -2086,7 +2118,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n#posts[data-v-42ea8a27] {\n    height: 100%;\n    width: 100%;\n    text-align: center;\n    margin-top: 10px;\n}\n#submit-post[data-v-42ea8a27] {\n    display: flex;\n    flex-direction: column;\n    width: 20%;\n    margin: 0 auto;\n}\n#create-post-link[data-v-42ea8a27] {\n    width: 20%;\n    margin: 20px auto;\n}\n#create-post-link > a[data-v-42ea8a27] {\n    cursor: pointer;\n}\n.action-buttons[data-v-42ea8a27] {\n    margin-top: 10px;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n#posts[data-v-42ea8a27] {\n    height: 100%;\n    width: 100%;\n    text-align: center;\n    margin-top: 10px;\n}\n#submit-post[data-v-42ea8a27] {\n    display: flex;\n    flex-direction: column;\n    width: 20%;\n    margin: 0 auto;\n}\n#create-post-link[data-v-42ea8a27] {\n    width: 20%;\n    margin: 20px auto;\n}\n#create-post-link > a[data-v-42ea8a27] {\n    cursor: pointer;\n}\n.action-buttons[data-v-42ea8a27] {\n    margin-top: 10px;\n}\n.error[data-v-42ea8a27] {\n    color: #c30000;\n    font-size: 16px;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -20232,6 +20264,12 @@ var render = function() {
             }
           }),
           _vm._v(" "),
+          _vm.errors.title.length
+            ? _c("span", { staticClass: "error" }, [
+                _vm._v(_vm._s(_vm.errors.title))
+              ])
+            : _vm._e(),
+          _vm._v(" "),
           _c("label", { attrs: { for: "content" } }, [_vm._v("Post")]),
           _vm._v(" "),
           _c("textarea", {
@@ -20254,6 +20292,12 @@ var render = function() {
               }
             }
           }),
+          _vm._v(" "),
+          _vm.errors.content.length
+            ? _c("span", { staticClass: "error" }, [
+                _vm._v(_vm._s(_vm.errors.content))
+              ])
+            : _vm._e(),
           _vm._v(" "),
           _c("span", { staticClass: "action-buttons" }, [
             _c(
