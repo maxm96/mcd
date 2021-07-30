@@ -42,6 +42,7 @@
 </div>
 
 <script type="text/javascript">
+    // Show dropdown menu
     function showDropdown() {
         document.getElementById('menu-dropdown').classList.toggle('show')
     }
