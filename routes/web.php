@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,19 +14,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return redirect(route('home'));
+    return view('welcome');
 });
 
-Route::get('/home', [HomeController::class, 'index'])->name('home');
-Route::get('/home/get_posts', [HomeController::class, 'getPosts'])->name('home.get_posts');
-Route::post('/home', [HomeController::class, 'submitPost'])
-    ->name('home.submit_post')
-    ->withoutMiddleware('auth');
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth'])->name('dashboard');
 
-Route::get('/chat', function () {
-    return 'Chat';
-})->name('chat');
-
-Route::get('/boards', function () {
-    return 'Boards';
-})->name('boards');
+require __DIR__.'/auth.php';

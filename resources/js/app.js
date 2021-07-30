@@ -1,10 +1,3 @@
-require('./bootstrap')
-import Vue from 'vue'
+require('./bootstrap');
 
-import PostsPage from "./components/PostsPage";
-
-Vue.component('posts-page', PostsPage)
-
-const app = new Vue({
-    el: '#app'
-})
+require('alpinejs');

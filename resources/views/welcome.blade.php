@@ -11,12 +11,12 @@
 <body>
 <div class="top-bar">
     <span class="title">mcd</span>
-    <span class="bar-link"><a href="{{ route('home') }}">Home</a></span>
+    <span class="bar-link"><a href="{{ route('home') }}">Dashboard</a></span>
     <span class="bar-link"><a href="{{ route('chat') }}">Chat</a></span>
     <span class="bar-link"><a href="{{ route('boards') }}">Boards</a></span>
     <span class="menu-link">
     @if (auth()->user())
-        {{ auth()->user()->username }}
+        {{ auth()->user()->name }}
     @else
         Menu
     @endif
