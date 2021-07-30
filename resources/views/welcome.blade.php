@@ -24,7 +24,7 @@
                 <a href="{{ route('account_settings') }}">Account settings</a>
                 <a href="{{ route('logout') }}">Logout</a>
             @else
-                <a href="{{ route('login') }}">Login</a>
+                <a href="{{ route('login.get') }}">Login</a>
                 <a href="{{ route('register') }}">Register</a>
             @endif
         </div>
