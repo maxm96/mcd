@@ -25,7 +25,7 @@
                 <a href="{{ route('logout') }}">Logout</a>
             @else
                 <a href="{{ route('login.get') }}">Login</a>
-                <a href="{{ route('register') }}">Register</a>
+                <a href="{{ route('register.get') }}">Register</a>
             @endif
         </div>
     </div>

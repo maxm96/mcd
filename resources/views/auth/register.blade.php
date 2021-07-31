@@ -1,7 +1,7 @@
 @extends('welcome')
 
 @section('content')
-    <form id="login-form" method="POST" action="{{ route('login.post') }}">
+    <form id="register-form" method="POST" action="{{ route('register.post') }}">
         @csrf
 
         <div>
@@ -16,11 +16,22 @@
         <br>
 
         <div>
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" value="{{ old('name') }}">
+            <br>
+            @error('name')
+                <span class="error">{{ $message }}</span>
+            @enderror
+        </div>
+
+        <br>
+
+        <div>
             <label for="password">Password:</label>
             <input type="password" id="password" name="password">
             <br>
             @error('password')
-            <span class="error">{{ $message }}</span>
+                <span class="error">{{ $message }}</span>
             @enderror
         </div>
 

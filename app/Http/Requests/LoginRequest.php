@@ -27,14 +27,13 @@ class LoginRequest extends FormRequest
     {
         return [
             'email' => 'required|string|email',
-            'name' => 'required|string',
             'password' => 'required|string',
         ];
     }
 
     public function authenticate()
     {
-        if (!Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        if (!Auth::attempt($this->only('email', 'password'))) {
             throw new ValidationException('Auth failed');
         }
     }
