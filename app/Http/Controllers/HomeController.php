@@ -23,7 +23,7 @@ class HomeController extends Controller
         $post = new Post();
         $post->title = $request->input('title');
         $post->content = $request->input('content');
-        $post->author = Auth::user() ? Auth::user()->username : 'Anonymous';
+        $post->author = Auth::check() ? Auth::user()->name : 'Anonymous';
 
         if (!$post->save()) {
             return response('Failed to save post', 500);
