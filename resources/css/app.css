@@ -61,17 +61,17 @@ span.bar-link, .menu-link {
     color: #d40000;
 }
 
-#login-form {
+#login-form, #register-form {
     width: 20%;
     margin: 0 auto;
 }
 
-#login-form label {
+#login-form label, #register-form label {
     font-size: 20px;
     font-weight: bold;
 }
 
-#login-form input {
+#login-form input, #register-form input {
     font-size: 20px;
     border: 2px solid grey;
     border-radius: 3px;
