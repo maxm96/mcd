@@ -23,6 +23,7 @@ Route::get('/home/get_posts', [HomeController::class, 'getPosts'])->name('home.g
 Route::post('/home', [HomeController::class, 'submitPost'])
     ->name('home.submit_post')
     ->withoutMiddleware('auth');
+Route::post('/home/comment', [HomeController::class, 'submitComment'])->name('home.submit_comment');
 
 Route::get('/chat', function () {
     return 'Chat';

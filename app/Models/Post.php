@@ -19,4 +19,9 @@ class Post extends Model
     private $title;
     private $content;
     private $author;
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
 }

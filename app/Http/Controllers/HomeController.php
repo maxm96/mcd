@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CommentRequest;
 use App\Http\Requests\PostRequest;
+use App\Models\Comment;
 use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,7 +17,7 @@ class HomeController extends Controller
 
     public function getPosts()
     {
-        return Post::all();
+        return Post::with('comments')->get()->all();
     }
 
     public function submitPost(PostRequest $request)
@@ -39,6 +41,19 @@ class HomeController extends Controller
                 'content' => $post->content,
                 'author' => $post->author,
             ]
+        ]);
+    }
+
+    public function submitComment(CommentRequest $request)
+    {
+        $comment = Comment::create([
+            'author' => Auth::check() ? Auth::user()->name : 'Anonymous',
+            'content' => $request->input('content'),
+            'post_id' => $request->input('postId'),
+        ]);
+
+        return response()->json([
+            'comment' => $comment->toArray(),
         ]);
     }
 }

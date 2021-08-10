@@ -18,6 +18,7 @@
             <p class="post-content">{{ post.content }}</p>
             <hr>
             <span>Submitted by: {{ post.author }}</span>
+            <a class="show-comments-link" @click="onShowCommentsClick">Show comments</a>
         </div>
 
     </div>
@@ -35,6 +36,9 @@ export default {
     methods: {
         toggleCollapsed() {
             this.collapsed = !this.collapsed
+        },
+        onShowCommentsClick() {
+            this.$emit('post:show-comments-click', this.post.id)
         },
     },
 }
@@ -57,5 +61,11 @@ export default {
 
 .collapse > a, .expand > a {
     cursor: pointer;
+}
+
+.show-comments-link {
+    cursor: pointer;
+    float: right;
+    font-size: 14px;
 }
 </style>

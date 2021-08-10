@@ -4,9 +4,22 @@
         <div id="posts">
             <p v-if="!posts.length">No posts yet ...</p>
             <div v-else>
-                <post v-for="post in posts" :key="post.id" :post="post"></post>
+                <post
+                    v-for="post in posts"
+                    :key="post.id"
+                    :post="post"
+                    @post:show-comments-click="showComments"
+                ></post>
             </div>
         </div>
+
+        <comments-viewer
+            :show="showCommentsViewer"
+            :comments="comments"
+            :title="selectedPost ? selectedPost.title : ''"
+            @comments-viewer:close="showCommentsViewer = false"
+        ></comments-viewer>
+
         <div id="create-post-link">
             <a @click="onCreatePostLinkClick">
                 {{ showPostForm ? 'Close' : 'Create a post' }}
@@ -31,18 +44,22 @@
 
 <script>
 import Post from "./Post"
+import CommentsViewer from "./CommentsViewer";
 
 export default {
     name: "PostsPage",
-    components: { Post },
+    components: { Post, CommentsViewer },
     data() {
         return {
             posts: [],
+            comments: [],
+            selectedPost: null,
             title: '',
             content: '',
             loading: false,
             errorMessage: '',
             showPostForm: false,
+            showCommentsViewer: true,
             errors: {
                 title: '',
                 content: '',
@@ -107,6 +124,11 @@ export default {
             this.title = ''
             this.content = ''
         },
+        showComments(postId) {
+            let post = this.posts.find(p => p.id === postId)
+            this.comments = this.comments.splice(0, this.comments.length, ...post.comments)
+            this.selectedPost = post
+        },
     },
     mounted() {
         this.loading = true
@@ -114,6 +136,9 @@ export default {
         axios.get('/home/get_posts')
             .then((res) => {
                 this.posts = res.data
+
+                // Set selected post to be the first post
+                this.selectedPost = this.posts[0] || null
             })
             .catch((err) => {
                 console.error(err)
