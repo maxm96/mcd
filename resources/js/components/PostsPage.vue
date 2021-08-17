@@ -17,7 +17,9 @@
             :show="showCommentsViewer"
             :comments="comments"
             :title="selectedPost ? selectedPost.title : ''"
+            :post-id="selectedPost ? selectedPost.id : null"
             @comments-viewer:close="showCommentsViewer = false"
+            @comments-viewer:comments-updated="onCommentsUpdated"
         ></comments-viewer>
 
         <div id="create-post-link">
@@ -59,7 +61,7 @@ export default {
             loading: false,
             errorMessage: '',
             showPostForm: false,
-            showCommentsViewer: true,
+            showCommentsViewer: false,
             errors: {
                 title: '',
                 content: '',
@@ -120,14 +122,18 @@ export default {
                 })
                 .finally(() => this.loading = false)
         },
+        onCommentsUpdated(comments) {
+            this.comments.splice(0, this.comments.length, comments)
+        },
         onClearClick() {
             this.title = ''
             this.content = ''
         },
         showComments(postId) {
             let post = this.posts.find(p => p.id === postId)
-            this.comments = this.comments.splice(0, this.comments.length, ...post.comments)
+            this.comments.splice(0, this.comments.length, ...post.comments)
             this.selectedPost = post
+            this.showCommentsViewer = true
         },
     },
     mounted() {

@@ -17,6 +17,8 @@ class Comment extends Model
 
     protected $table = 'comments';
 
+    protected $guarded = [];
+
     private $author;
     private $content;
     private $post_id;

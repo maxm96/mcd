@@ -1,21 +1,43 @@
 <template>
     <div id="comments-viewer" v-show="show">
         <div class="dialog-box">
-            <h3 class="dialog-title" ref="dialog-title"></h3>
+            <h3 class="dialog-title" ref="dialog-title">{{ title }}</h3>
             <a class="dialog-close" title="Close" @click="onCloseClick">&times;</a>
-            <div class="dialog-content"></div>
-            <div class="dialog-action"></div>
+            <div class="dialog-content">
+                <div v-if="!comments.length">No comments yet ...</div>
+                <div v-else v-for="comment in comments" class="comment">
+                    <p class="comment-content">{{ comment.content }}</p>
+                    <span class="comment-author">{{ comment.author }}</span>
+                </div>
+            </div>
+            <div class="dialog-action">
+                <input type="text" v-model="comment" placeholder="Type a comment">
+                <button type="button" @click="onCommentSubmit">Submit</button>
+                <br>
+                <span
+                    v-if="contentErrorMessage.length"
+                    class="error"
+                    id="content-error"
+                >
+                    {{ contentErrorMessage }}
+                </span>
+            </div>
         </div>
-        <div class="dialog-box-overlay">
-
-        </div>
+        <div class="dialog-box-overlay"></div>
     </div>
 </template>
 
 <script>
 export default {
     name: "CommentsViewer",
-    props: ['show', 'comments', 'title'],
+    props: ['show', 'comments', 'title', 'postId'],
+    data() {
+        return {
+            comment: '',
+            loading: false,
+            contentErrorMessage: ''
+        }
+    },
     methods: {
         setDialog() {
             let selected = null,
@@ -55,6 +77,44 @@ export default {
         onCloseClick() {
             this.$emit('comments-viewer:close')
         },
+        validateComment() {
+            this.comment = this.comment.trim()
+
+            let validated = Boolean(this.comment.length)
+
+            if (validated) {
+                this.contentErrorMessage = ''
+            } else {
+                this.contentErrorMessage = 'This field must not be empty'
+            }
+
+            return validated
+        },
+        onCommentSubmit() {
+            if (!this.validateComment()) {
+                return
+            }
+
+            let payload = { content: this.comment, postId: this.postId }
+
+            this.loading = true
+            axios.post('/home/comment', payload)
+                .then((res) => {
+                    if (res.data.comments) {
+                        this.$emit('comments-viewer:comments-updated', res.data.comments)
+                    }
+                })
+                .catch((err) => {
+                    console.error(err)
+
+                    if (err.errors && err.errors.content && err.errors.content.length) {
+                        this.contentErrorMessage = err.errors.content[0]
+                    } else {
+                        this.contentErrorMessage = ''
+                    }
+                })
+                .finally(() => this.loading = false)
+        },
     },
     mounted() {
         this.setDialog()
@@ -64,8 +124,8 @@ export default {
 
 <style scoped>
 .dialog-box {
-    width: 300px;
-    height: 150px;
+    width: 30%;
+    height: 70%;
     background-color: white;
     border: 1px solid #ccc;
     box-shadow: 0 1px 5px rgba(0, 0, 0, .2);
@@ -73,8 +133,10 @@ export default {
     z-index: 9999;
     color: #666;
     /* TODO: there's got to be a better way to do this */
-    margin-top: -51px;
-    margin-left: -101px;
+    margin-top: -205px;
+    margin-left: -210px;
+    left: 50%;
+    top: 50%;
 }
 
 .dialog-box .dialog-title {
@@ -190,5 +252,9 @@ export default {
     bottom: 0;
     left: 0;
     z-index: 9997;
+}
+
+#content-error {
+    font-size: 16px;
 }
 </style>

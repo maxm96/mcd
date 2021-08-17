@@ -46,14 +46,14 @@ class HomeController extends Controller
 
     public function submitComment(CommentRequest $request)
     {
-        $comment = Comment::create([
+        Comment::create([
             'author' => Auth::check() ? Auth::user()->name : 'Anonymous',
             'content' => $request->input('content'),
             'post_id' => $request->input('postId'),
         ]);
 
         return response()->json([
-            'comment' => $comment->toArray(),
+            'comments' => Comment::all(),
         ]);
     }
 }

@@ -1859,9 +1859,31 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "CommentsViewer",
-  props: ['show', 'comments', 'title'],
+  props: ['show', 'comments', 'title', 'postId'],
+  data: function data() {
+    return {
+      comment: '',
+      loading: false,
+      contentErrorMessage: ''
+    };
+  },
   methods: {
     setDialog: function setDialog() {
       var _this = this;
@@ -1902,6 +1924,46 @@ __webpack_require__.r(__webpack_exports__);
     },
     onCloseClick: function onCloseClick() {
       this.$emit('comments-viewer:close');
+    },
+    validateComment: function validateComment() {
+      this.comment = this.comment.trim();
+      var validated = Boolean(this.comment.length);
+
+      if (validated) {
+        this.contentErrorMessage = '';
+      } else {
+        this.contentErrorMessage = 'This field must not be empty';
+      }
+
+      return validated;
+    },
+    onCommentSubmit: function onCommentSubmit() {
+      var _this2 = this;
+
+      if (!this.validateComment()) {
+        return;
+      }
+
+      var payload = {
+        content: this.comment,
+        postId: this.postId
+      };
+      this.loading = true;
+      axios.post('/home/comment', payload).then(function (res) {
+        if (res.data.comments) {
+          _this2.$emit('comments-viewer:comments-updated', res.data.comments);
+        }
+      })["catch"](function (err) {
+        console.error(err);
+
+        if (err.errors && err.errors.content && err.errors.content.length) {
+          _this2.contentErrorMessage = err.errors.content[0];
+        } else {
+          _this2.contentErrorMessage = '';
+        }
+      })["finally"](function () {
+        return _this2.loading = false;
+      });
     }
   },
   mounted: function mounted() {
@@ -2037,6 +2099,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //
 //
 //
+//
+//
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -2055,7 +2119,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       loading: false,
       errorMessage: '',
       showPostForm: false,
-      showCommentsViewer: true,
+      showCommentsViewer: false,
       errors: {
         title: '',
         content: ''
@@ -2115,6 +2179,9 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         return _this.loading = false;
       });
     },
+    onCommentsUpdated: function onCommentsUpdated(comments) {
+      this.comments.splice(0, this.comments.length, comments);
+    },
     onClearClick: function onClearClick() {
       this.title = '';
       this.content = '';
@@ -2125,8 +2192,11 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       var post = this.posts.find(function (p) {
         return p.id === postId;
       });
-      this.comments = (_this$comments = this.comments).splice.apply(_this$comments, [0, this.comments.length].concat(_toConsumableArray(post.comments)));
+
+      (_this$comments = this.comments).splice.apply(_this$comments, [0, this.comments.length].concat(_toConsumableArray(post.comments)));
+
       this.selectedPost = post;
+      this.showCommentsViewer = true;
     }
   },
   mounted: function mounted() {
@@ -2217,7 +2287,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.dialog-box[data-v-deb7c55e] {\n    width: 300px;\n    height: 150px;\n    background-color: white;\n    border: 1px solid #ccc;\n    box-shadow: 0 1px 5px rgba(0, 0, 0, .2);\n    position: absolute;\n    z-index: 9999;\n    color: #666;\n    margin-top: -51px;\n    margin-left: -101px;\n}\n.dialog-box .dialog-title[data-v-deb7c55e] {\n    margin: 0;\n    font: inherit;\n    color: inherit;\n    font-weight: bold;\n    height: 2em;\n    line-height: 2em;\n    overflow: hidden;\n    padding: 0 .8em;\n    background-color: #eee;\n    cursor: move;\n}\n.dialog-box .dialog-content[data-v-deb7c55e] {\n    border-top: 1px solid #ccc;\n    padding: 1em;\n    position: absolute;\n    top: 2em;\n    right: 0;\n    bottom: 3em;\n    left: 0;\n    overflow: auto;\n}\n.dialog-box .dialog-content iframe[data-v-deb7c55e] {\n    display: block;\n    border: none;\n    background: none;\n    margin: 0;\n    padding: 0;\n    overflow: auto;\n    width: 100%;\n    height: 100%;\n}\n.dialog-box .dialog-action[data-v-deb7c55e] {\n    position: absolute;\n    right: 0;\n    bottom: 0;\n    left: 0;\n    height: 2em;\n    padding: .5em;\n    background-color: #eee;\n    border-top: 1px solid #ccc;\n    text-align: right;\n}\n.dialog-box .dialog-action .btn[data-v-deb7c55e] {\n    text-decoration: none;\n    outline: none;\n    color: inherit;\n    font-weight: bold;\n    background-color: white;\n    border: 1px solid #ccc;\n    border-radius: .2em;\n    padding: .4em 1em;\n    margin-left: .2em;\n    line-height: 2em;\n    cursor: pointer;\n}\n.dialog-box .dialog-close[data-v-deb7c55e], .dialog-box .dialog-minmax[data-v-deb7c55e] {\n    border: none;\n    outline: none;\n    background: none;\n    font: inherit;\n    font-family: Arial, SansSerif;\n    font-style: normal;\n    font-weight: bold;\n    font-size: 150%;\n    line-height: 1.4em;\n    color: #aaa;\n    text-decoration: none;\n    position: absolute;\n    top: 0;\n    right: .3em;\n    text-align: center;\n    cursor: pointer;\n}\n.dialog-box .dialog-minmax[data-v-deb7c55e] {\n    right: 1.5em;\n}\n.dialog-box .dialog-close[data-v-deb7c55e]:focus,\n.dialog-box .dialog-minmax[data-v-deb7c55e]:focus,\n.dialog-box .dialog-action .btn[data-v-deb7c55e]:focus {\n    border-width: 0;\n    outline: none;\n}\n.dialog-box .dialog-close[data-v-deb7c55e]:hover, .dialog-box .dialog-minmax[data-v-deb7c55e]:hover {\n    color: #777;\n}\n.dialog-box .dialog-close[data-v-deb7c55e]:focus, .dialog-box .dialog-minmax[data-v-deb7c55e]:focus {\n    color: #c90000;\n}\n.dialog-box .dialog-close[data-v-deb7c55e]:active, .dialog-box .dialog-minmax[data-v-deb7c55e]:active {\n    color: #444;\n}\n.dialog-box + .dialog-box-overlay[data-v-deb7c55e] {\n    background-color: black;\n    opacity: .2;\n    filter: alpha(opacity=20);\n    position: absolute;\n    top: 0;\n    right: 0;\n    bottom: 0;\n    left: 0;\n    z-index: 9997;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.dialog-box[data-v-deb7c55e] {\n    width: 30%;\n    height: 70%;\n    background-color: white;\n    border: 1px solid #ccc;\n    box-shadow: 0 1px 5px rgba(0, 0, 0, .2);\n    position: absolute;\n    z-index: 9999;\n    color: #666;\n    /* TODO: there's got to be a better way to do this */\n    margin-top: -205px;\n    margin-left: -210px;\n    left: 50%;\n    top: 50%;\n}\n.dialog-box .dialog-title[data-v-deb7c55e] {\n    margin: 0;\n    font: inherit;\n    color: inherit;\n    font-weight: bold;\n    height: 2em;\n    line-height: 2em;\n    overflow: hidden;\n    padding: 0 .8em;\n    background-color: #eee;\n    cursor: move;\n}\n.dialog-box .dialog-content[data-v-deb7c55e] {\n    border-top: 1px solid #ccc;\n    padding: 1em;\n    position: absolute;\n    top: 2em;\n    right: 0;\n    bottom: 3em;\n    left: 0;\n    overflow: auto;\n}\n.dialog-box .dialog-content iframe[data-v-deb7c55e] {\n    display: block;\n    border: none;\n    background: none;\n    margin: 0;\n    padding: 0;\n    overflow: auto;\n    width: 100%;\n    height: 100%;\n}\n.dialog-box .dialog-action[data-v-deb7c55e] {\n    position: absolute;\n    right: 0;\n    bottom: 0;\n    left: 0;\n    height: 2em;\n    padding: .5em;\n    background-color: #eee;\n    border-top: 1px solid #ccc;\n    text-align: right;\n}\n.dialog-box .dialog-action .btn[data-v-deb7c55e] {\n    text-decoration: none;\n    outline: none;\n    color: inherit;\n    font-weight: bold;\n    background-color: white;\n    border: 1px solid #ccc;\n    border-radius: .2em;\n    padding: .4em 1em;\n    margin-left: .2em;\n    line-height: 2em;\n    cursor: pointer;\n}\n.dialog-box .dialog-close[data-v-deb7c55e], .dialog-box .dialog-minmax[data-v-deb7c55e] {\n    border: none;\n    outline: none;\n    background: none;\n    font: inherit;\n    font-family: Arial, SansSerif;\n    font-style: normal;\n    font-weight: bold;\n    font-size: 150%;\n    line-height: 1.4em;\n    color: #aaa;\n    text-decoration: none;\n    position: absolute;\n    top: 0;\n    right: .3em;\n    text-align: center;\n    cursor: pointer;\n}\n.dialog-box .dialog-minmax[data-v-deb7c55e] {\n    right: 1.5em;\n}\n.dialog-box .dialog-close[data-v-deb7c55e]:focus,\n.dialog-box .dialog-minmax[data-v-deb7c55e]:focus,\n.dialog-box .dialog-action .btn[data-v-deb7c55e]:focus {\n    border-width: 0;\n    outline: none;\n}\n.dialog-box .dialog-close[data-v-deb7c55e]:hover, .dialog-box .dialog-minmax[data-v-deb7c55e]:hover {\n    color: #777;\n}\n.dialog-box .dialog-close[data-v-deb7c55e]:focus, .dialog-box .dialog-minmax[data-v-deb7c55e]:focus {\n    color: #c90000;\n}\n.dialog-box .dialog-close[data-v-deb7c55e]:active, .dialog-box .dialog-minmax[data-v-deb7c55e]:active {\n    color: #444;\n}\n.dialog-box + .dialog-box-overlay[data-v-deb7c55e] {\n    background-color: black;\n    opacity: .2;\n    filter: alpha(opacity=20);\n    position: absolute;\n    top: 0;\n    right: 0;\n    bottom: 0;\n    left: 0;\n    z-index: 9997;\n}\n#content-error[data-v-deb7c55e] {\n    font-size: 16px;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -20423,7 +20493,9 @@ var render = function() {
     },
     [
       _c("div", { staticClass: "dialog-box" }, [
-        _c("h3", { ref: "dialog-title", staticClass: "dialog-title" }),
+        _c("h3", { ref: "dialog-title", staticClass: "dialog-title" }, [
+          _vm._v(_vm._s(_vm.title))
+        ]),
         _vm._v(" "),
         _c(
           "a",
@@ -20435,9 +20507,71 @@ var render = function() {
           [_vm._v("×")]
         ),
         _vm._v(" "),
-        _c("div", { staticClass: "dialog-content" }),
+        _c(
+          "div",
+          { staticClass: "dialog-content" },
+          [
+            !_vm.comments.length
+              ? _c("div", [_vm._v("No comments yet ...")])
+              : _vm._l(_vm.comments, function(comment) {
+                  return _c("div", { staticClass: "comment" }, [
+                    _c("p", { staticClass: "comment-content" }, [
+                      _vm._v(_vm._s(comment.content))
+                    ]),
+                    _vm._v(" "),
+                    _c("span", { staticClass: "comment-author" }, [
+                      _vm._v(_vm._s(comment.author))
+                    ])
+                  ])
+                })
+          ],
+          2
+        ),
         _vm._v(" "),
-        _c("div", { staticClass: "dialog-action" })
+        _c("div", { staticClass: "dialog-action" }, [
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.comment,
+                expression: "comment"
+              }
+            ],
+            attrs: { type: "text", placeholder: "Type a comment" },
+            domProps: { value: _vm.comment },
+            on: {
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.comment = $event.target.value
+              }
+            }
+          }),
+          _vm._v(" "),
+          _c(
+            "button",
+            { attrs: { type: "button" }, on: { click: _vm.onCommentSubmit } },
+            [_vm._v("Submit")]
+          ),
+          _vm._v(" "),
+          _c("br"),
+          _vm._v(" "),
+          _vm.contentErrorMessage.length
+            ? _c(
+                "span",
+                { staticClass: "error", attrs: { id: "content-error" } },
+                [
+                  _vm._v(
+                    "\n                " +
+                      _vm._s(_vm.contentErrorMessage) +
+                      "\n            "
+                  )
+                ]
+              )
+            : _vm._e()
+        ])
       ]),
       _vm._v(" "),
       _c("div", { staticClass: "dialog-box-overlay" })
@@ -20567,12 +20701,14 @@ var render = function() {
         attrs: {
           show: _vm.showCommentsViewer,
           comments: _vm.comments,
-          title: _vm.selectedPost ? _vm.selectedPost.title : ""
+          title: _vm.selectedPost ? _vm.selectedPost.title : "",
+          "post-id": _vm.selectedPost ? _vm.selectedPost.id : null
         },
         on: {
           "comments-viewer:close": function($event) {
             _vm.showCommentsViewer = false
-          }
+          },
+          "comments-viewer:comments-updated": _vm.onCommentsUpdated
         }
       }),
       _vm._v(" "),
