@@ -54,6 +54,10 @@ export default {
     padding: 5px;
 }
 
+.post-title, .post-content {
+    overflow-wrap: break-word;
+}
+
 .collapse, .expand {
     float: right;
     margin-bottom: -20px;
