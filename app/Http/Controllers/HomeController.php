@@ -46,14 +46,17 @@ class HomeController extends Controller
 
     public function submitComment(CommentRequest $request)
     {
+        $content = $request->input('content');
+        $postId = $request->input('postId');
+
         Comment::create([
             'author' => Auth::check() ? Auth::user()->name : 'Anonymous',
-            'content' => $request->input('content'),
-            'post_id' => $request->input('postId'),
+            'content' => $content,
+            'post_id' => $postId,
         ]);
 
         return response()->json([
-            'comments' => Comment::all(),
+            'comments' => Comment::where('post_id', '=', $postId)->get()->all(),
         ]);
     }
 }

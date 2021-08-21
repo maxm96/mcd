@@ -5,10 +5,14 @@
             <a class="dialog-close" title="Close" @click="onCloseClick">&times;</a>
             <div class="dialog-content">
                 <div v-if="!comments.length">No comments yet ...</div>
-                <div v-else v-for="comment in comments" class="comment">
-                    <p class="comment-content">{{ comment.content }}</p>
-                    <span class="comment-author">{{ comment.author }}</span>
-                </div>
+                <comment
+                    v-else
+                    v-for="comment in comments"
+                    :key="comment.id"
+                    :content="comment.content"
+                    :author="comment.author"
+                >
+                </comment>
             </div>
             <div class="dialog-action">
                 <input type="text" v-model="comment" placeholder="Type a comment">
@@ -28,8 +32,11 @@
 </template>
 
 <script>
+import Comment from "./Comment";
+
 export default {
     name: "CommentsViewer",
+    components: { Comment },
     props: ['show', 'comments', 'title', 'postId'],
     data() {
         return {
@@ -103,6 +110,9 @@ export default {
                     if (res.data.comments) {
                         this.$emit('comments-viewer:comments-updated', res.data.comments)
                     }
+
+                    // Clear input
+                    this.comment = ''
                 })
                 .catch((err) => {
                     console.error(err)
@@ -133,7 +143,7 @@ export default {
     z-index: 9999;
     color: #666;
     /* TODO: there's got to be a better way to do this */
-    margin-top: -205px;
+    margin-top: -210px;
     margin-left: -210px;
     left: 50%;
     top: 50%;

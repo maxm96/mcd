@@ -123,7 +123,18 @@ export default {
                 .finally(() => this.loading = false)
         },
         onCommentsUpdated(comments) {
-            this.comments.splice(0, this.comments.length, comments)
+            // TODO: make this.comments a computed property
+
+            // Update the current comments array
+            this.comments.splice(0, this.comments.length, ...comments)
+
+            // Also update the comments property on the post object
+            let postIndex = this.posts.findIndex(p => p.id === this.selectedPost.id)
+            if (postIndex < 0) {
+                return console.log(`Unable to find post with id ${this.selectedPost.id}`)
+            }
+
+            this.posts[postIndex].comments = comments
         },
         onClearClick() {
             this.title = ''
