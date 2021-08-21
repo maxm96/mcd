@@ -32,15 +32,10 @@ class HomeController extends Controller
         }
 
         // Get the id
-        $post->refresh();
+        $post->refresh()->with('comments');
 
         return response()->json([
-            'post' => [
-                'id' => $post->id,
-                'title' => $post->title,
-                'content' => $post->content,
-                'author' => $post->author,
-            ]
+            'post' => $post,
         ]);
     }
 

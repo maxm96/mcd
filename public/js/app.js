@@ -2182,7 +2182,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       return post;
     },
     comments: function comments() {
-      return this.selectedPost ? this.selectedPost.comments : [];
+      return this.selectedPost && this.selectedPost.comments ? this.selectedPost.comments : [];
     }
   },
   methods: {
@@ -2224,6 +2224,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         content: this.content
       };
       axios.post('/home', payload).then(function (res) {
+        console.log("POST", res.data.post);
+
         _this2.posts.push(res.data.post); // Clear form
 
 

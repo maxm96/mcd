@@ -82,7 +82,9 @@ export default {
             return post
         },
         comments() {
-            return this.selectedPost ? this.selectedPost.comments : []
+            return (this.selectedPost && this.selectedPost.comments)
+                ? this.selectedPost.comments
+                : []
         },
     },
     methods: {
@@ -124,6 +126,7 @@ export default {
 
             axios.post('/home', payload)
                 .then((res) => {
+                    console.log("POST", res.data.post)
                     this.posts.push(res.data.post)
 
                     // Clear form
