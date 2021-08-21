@@ -139,7 +139,7 @@ export default {
     background-color: white;
     border: 1px solid #ccc;
     box-shadow: 0 1px 5px rgba(0, 0, 0, .2);
-    position: absolute;
+    position: fixed;
     z-index: 9999;
     color: #666;
     /* TODO: there's got to be a better way to do this */
@@ -256,7 +256,7 @@ export default {
     background-color: black;
     opacity: .2;
     filter: alpha(opacity=20);
-    position: absolute;
+    position: fixed;
     top: 0;
     right: 0;
     bottom: 0;
