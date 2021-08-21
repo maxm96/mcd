@@ -54,8 +54,7 @@ export default {
     data() {
         return {
             posts: [],
-            comments: [],
-            selectedPost: null,
+            selectedPostId: null,
             title: '',
             content: '',
             loading: false,
@@ -67,6 +66,24 @@ export default {
                 content: '',
             },
         }
+    },
+    computed: {
+        selectedPost() {
+            if (!this.selectedPostId) {
+                return null
+            }
+
+            let post = this.posts.find(p => p.id === this.selectedPostId)
+            if (!post) {
+                console.error(`Unable to find post with ID ${this.selectedPostId}`)
+                return null
+            }
+
+            return post
+        },
+        comments() {
+            return this.selectedPost ? this.selectedPost.comments : []
+        },
     },
     methods: {
         onCreatePostLinkClick() {
@@ -123,27 +140,19 @@ export default {
                 .finally(() => this.loading = false)
         },
         onCommentsUpdated(comments) {
-            // TODO: make this.comments a computed property
-
-            // Update the current comments array
-            this.comments.splice(0, this.comments.length, ...comments)
-
-            // Also update the comments property on the post object
-            let postIndex = this.posts.findIndex(p => p.id === this.selectedPost.id)
+            let postIndex = this.posts.findIndex(p => p.id === this.selectedPostId)
             if (postIndex < 0) {
-                return console.log(`Unable to find post with id ${this.selectedPost.id}`)
+                return console.log(`Unable to find post with id ${this.selectedPostId}`)
             }
 
-            this.posts[postIndex].comments = comments
+            this.posts[postIndex].comments.splice(0, this.posts[postIndex].comments.length, ...comments)
         },
         onClearClick() {
             this.title = ''
             this.content = ''
         },
         showComments(postId) {
-            let post = this.posts.find(p => p.id === postId)
-            this.comments.splice(0, this.comments.length, ...post.comments)
-            this.selectedPost = post
+            this.selectedPostId = postId
             this.showCommentsViewer = true
         },
     },
@@ -154,8 +163,8 @@ export default {
             .then((res) => {
                 this.posts = res.data
 
-                // Set selected post to be the first post
-                this.selectedPost = this.posts[0] || null
+                // Auto select first post
+                this.selectedPostId = this.posts[0].id || null
             })
             .catch((err) => {
                 console.error(err)

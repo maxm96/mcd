@@ -2149,8 +2149,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
   data: function data() {
     return {
       posts: [],
-      comments: [],
-      selectedPost: null,
+      selectedPostId: null,
       title: '',
       content: '',
       loading: false,
@@ -2162,6 +2161,29 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         content: ''
       }
     };
+  },
+  computed: {
+    selectedPost: function selectedPost() {
+      var _this = this;
+
+      if (!this.selectedPostId) {
+        return null;
+      }
+
+      var post = this.posts.find(function (p) {
+        return p.id === _this.selectedPostId;
+      });
+
+      if (!post) {
+        console.error("Unable to find post with ID ".concat(this.selectedPostId));
+        return null;
+      }
+
+      return post;
+    },
+    comments: function comments() {
+      return this.selectedPost ? this.selectedPost.comments : [];
+    }
   },
   methods: {
     onCreatePostLinkClick: function onCreatePostLinkClick() {
@@ -2190,7 +2212,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       return pass;
     },
     onSubmitClick: function onSubmitClick() {
-      var _this = this;
+      var _this2 = this;
 
       if (!this.validatePost()) {
         return;
@@ -2202,69 +2224,56 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         content: this.content
       };
       axios.post('/home', payload).then(function (res) {
-        _this.posts.push(res.data.post); // Clear form
+        _this2.posts.push(res.data.post); // Clear form
 
 
-        _this.title = '';
-        _this.content = ''; // Hide form
+        _this2.title = '';
+        _this2.content = ''; // Hide form
 
-        _this.showPostForm = false;
+        _this2.showPostForm = false;
       })["catch"](function (err) {
         console.error(err);
-        _this.errorMessage = "Failed to save post: ".concat(err);
+        _this2.errorMessage = "Failed to save post: ".concat(err);
       })["finally"](function () {
-        return _this.loading = false;
+        return _this2.loading = false;
       });
     },
     onCommentsUpdated: function onCommentsUpdated(comments) {
-      var _this$comments,
-          _this2 = this;
-
-      // TODO: make this.comments a computed property
-      // Update the current comments array
-      (_this$comments = this.comments).splice.apply(_this$comments, [0, this.comments.length].concat(_toConsumableArray(comments))); // Also update the comments property on the post object
-
+      var _this3 = this,
+          _this$posts$postIndex;
 
       var postIndex = this.posts.findIndex(function (p) {
-        return p.id === _this2.selectedPost.id;
+        return p.id === _this3.selectedPostId;
       });
 
       if (postIndex < 0) {
-        return console.log("Unable to find post with id ".concat(this.selectedPost.id));
+        return console.log("Unable to find post with id ".concat(this.selectedPostId));
       }
 
-      this.posts[postIndex].comments = comments;
+      (_this$posts$postIndex = this.posts[postIndex].comments).splice.apply(_this$posts$postIndex, [0, this.posts[postIndex].comments.length].concat(_toConsumableArray(comments)));
     },
     onClearClick: function onClearClick() {
       this.title = '';
       this.content = '';
     },
     showComments: function showComments(postId) {
-      var _this$comments2;
-
-      var post = this.posts.find(function (p) {
-        return p.id === postId;
-      });
-
-      (_this$comments2 = this.comments).splice.apply(_this$comments2, [0, this.comments.length].concat(_toConsumableArray(post.comments)));
-
-      this.selectedPost = post;
+      this.selectedPostId = postId;
       this.showCommentsViewer = true;
     }
   },
   mounted: function mounted() {
-    var _this3 = this;
+    var _this4 = this;
 
     this.loading = true;
     axios.get('/home/get_posts').then(function (res) {
-      _this3.posts = res.data; // Set selected post to be the first post
+      _this4.posts = res.data; // Auto select first post
 
-      _this3.selectedPost = _this3.posts[0] || null;
+      _this4.selectedPostId = _this4.posts[0].id || null;
     })["catch"](function (err) {
       console.error(err);
-      _this3.errorMessage = "Failed to fetch posts: ".concat(err);
+      _this4.errorMessage = "Failed to fetch posts: ".concat(err);
     })["finally"](function () {
-      return _this3.loading = false;
+      return _this4.loading = false;
     });
   }
 });
