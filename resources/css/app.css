@@ -80,3 +80,17 @@ span.bar-link, .menu-link {
     border: 2px solid grey;
     border-radius: 3px;
 }
+
+.alert {
+    font-size: 24px;
+    width: 30%;
+    margin: 10px auto;
+    border-radius: 5px;
+    text-align: center;
+    padding: 10px;
+}
+
+.alert-danger {
+    background-color: #f4bdbd;
+    color: #4a4a4a;
+}

@@ -34,6 +34,12 @@
 </div>
 
 <div class="content">
+    @if (session()->has('danger'))
+        <div class="alert alert-danger">
+            {{ session()->get('danger') }}
+        </div>
+    @endif
+
     @yield('content')
 </div>
 
