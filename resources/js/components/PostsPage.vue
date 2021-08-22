@@ -100,18 +100,8 @@ export default {
     },
     methods: {
         onPageClick(page) {
-            this.loading = true
             this.currentPage = page
-
-            axios.get(`/home/get_posts/${this.currentPage - 1}/${this.postCount}`)
-                .then((res) => {
-                    this.posts.splice(0, this.posts.length, ...res.data.posts)
-                    this.totalPosts = res.data.total
-                })
-                .catch((err) => {
-                    console.error(err)
-                })
-                .finally(() => this.loading = false)
+            this.getPostsPage()
         },
         onCreatePostLinkClick() {
             this.showPostForm = !this.showPostForm
@@ -183,24 +173,24 @@ export default {
             this.selectedPostId = postId
             this.showCommentsViewer = true
         },
+        getPostsPage() {
+            this.loading = true
+
+            axios.get(`/home/get_posts/${this.currentPage - 1}/${this.postCount}`)
+                .then((res) => {
+                    this.posts.splice(0, this.posts.length, ...res.data.posts)
+                    this.totalPosts = res.data.total
+                    this.totalPages = Math.ceil(this.totalPosts / this.postCount)
+                })
+                .catch((err) => {
+                    console.error(err)
+                    this.errorMessage = `Failed to fetch posts: ${err}`
+                })
+                .finally(() => this.loading  = false)
+        },
     },
     mounted() {
-        this.loading = true
-
-        axios.get(`/home/get_posts/${this.currentPage - 1}/${this.postCount}`)
-            .then((res) => {
-                this.posts = res.data.posts
-                this.totalPosts = res.data.total
-                this.totalPages = Math.ceil(this.totalPosts / this.postCount)
-
-                // Auto select first post
-                this.selectedPostId = this.posts[0].id || null
-            })
-            .catch((err) => {
-                console.error(err)
-                this.errorMessage = `Failed to fetch posts: ${err}`
-            })
-            .finally(() => this.loading = false)
+        this.getPostsPage()
     },
 }
 </script>
