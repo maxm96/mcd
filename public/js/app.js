@@ -2010,6 +2010,84 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/PaginationButtons.vue?vue&type=script&lang=js&":
+/*!************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/PaginationButtons.vue?vue&type=script&lang=js& ***!
+  \************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  name: "PaginationButtons",
+  props: ['current', 'pageCount'],
+  computed: {
+    pages: function pages() {
+      var pagesArr = [];
+
+      for (var i = 0; i < this.pageCount; i++) {
+        pagesArr.push(i + 1);
+      }
+
+      return pagesArr;
+    },
+    disablePreviousButton: function disablePreviousButton() {
+      // Disable previous button when the current page is the first page
+      return this.current === this.pages[0];
+    },
+    disableNextButton: function disableNextButton() {
+      // Disable the next button when the current page is the last page
+      return this.current === this.pages[this.pages.length - 1];
+    }
+  },
+  methods: {
+    onPageClick: function onPageClick(page) {
+      this.$emit('pagination-buttons:page-click', page);
+    },
+    onPreviousPageClick: function onPreviousPageClick() {
+      // Do not do anything if the button is disabled
+      if (this.disablePreviousButton) {
+        return;
+      }
+
+      this.onPageClick(this.current - 1);
+    },
+    onNextPageClick: function onNextPageClick() {
+      // Do not do anything if the button is disabled
+      if (this.disableNextButton) {
+        return;
+      }
+
+      this.onPageClick(this.current + 1);
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Post.vue?vue&type=script&lang=js&":
 /*!***********************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Post.vue?vue&type=script&lang=js& ***!
@@ -2052,7 +2130,7 @@ __webpack_require__.r(__webpack_exports__);
   props: ['post'],
   data: function data() {
     return {
-      collapsed: false
+      collapsed: true
     };
   },
   methods: {
@@ -2080,6 +2158,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _Post__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Post */ "./resources/js/components/Post.vue");
 /* harmony import */ var _CommentsViewer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CommentsViewer */ "./resources/js/components/CommentsViewer.vue");
+/* harmony import */ var _PaginationButtons__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./PaginationButtons */ "./resources/js/components/PaginationButtons.vue");
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -2138,13 +2217,21 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //
 //
 //
+//
+//
+//
+//
+//
+//
+
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "PostsPage",
   components: {
     Post: _Post__WEBPACK_IMPORTED_MODULE_0__.default,
-    CommentsViewer: _CommentsViewer__WEBPACK_IMPORTED_MODULE_1__.default
+    CommentsViewer: _CommentsViewer__WEBPACK_IMPORTED_MODULE_1__.default,
+    PaginationButtons: _PaginationButtons__WEBPACK_IMPORTED_MODULE_2__.default
   },
   data: function data() {
     return {
@@ -2159,7 +2246,12 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       errors: {
         title: '',
         content: ''
-      }
+      },
+      currentPage: 1,
+      totalPages: 0,
+      totalPosts: 0,
+      postCount: 5 // The number of posts per page
+
     };
   },
   computed: {
@@ -2186,6 +2278,10 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     }
   },
   methods: {
+    onPageClick: function onPageClick(page) {
+      this.currentPage = page;
+      this.getPostsPage();
+    },
     onCreatePostLinkClick: function onCreatePostLinkClick() {
       this.showPostForm = !this.showPostForm;
     },
@@ -2219,14 +2315,12 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       }
 
       this.loading = true;
-      var payload = {
+      axios.post('/home', {
         title: this.title,
         content: this.content
-      };
-      axios.post('/home', payload).then(function (res) {
-        console.log("POST", res.data.post);
-
-        _this2.posts.push(res.data.post); // Clear form
+      }).then(function (res) {
+        // Update the current page of posts
+        _this2.getPostsPage(); // Clear form
 
 
         _this2.title = '';
@@ -2261,22 +2355,28 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     showComments: function showComments(postId) {
       this.selectedPostId = postId;
       this.showCommentsViewer = true;
+    },
+    getPostsPage: function getPostsPage() {
+      var _this4 = this;
+
+      this.loading = true;
+      axios.get("/home/get_posts/".concat(this.currentPage - 1, "/").concat(this.postCount)).then(function (res) {
+        var _this4$posts;
+
+        (_this4$posts = _this4.posts).splice.apply(_this4$posts, [0, _this4.posts.length].concat(_toConsumableArray(res.data.posts)));
+
+        _this4.totalPosts = res.data.total;
+        _this4.totalPages = Math.ceil(_this4.totalPosts / _this4.postCount);
+      })["catch"](function (err) {
+        console.error(err);
+        _this4.errorMessage = "Failed to fetch posts: ".concat(err);
+      })["finally"](function () {
+        return _this4.loading = false;
+      });
     }
   },
   mounted: function mounted() {
-    var _this4 = this;
-
-    this.loading = true;
-    axios.get('/home/get_posts').then(function (res) {
-      _this4.posts = res.data; // Auto select first post
-
-      _this4.selectedPostId = _this4.posts[0].id || null;
-    })["catch"](function (err) {
-      console.error(err);
-      _this4.errorMessage = "Failed to fetch posts: ".concat(err);
-    })["finally"](function () {
-      return _this4.loading = false;
-    });
+    this.getPostsPage();
   }
 });
 
@@ -2376,6 +2476,30 @@ __webpack_require__.r(__webpack_exports__);
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
 ___CSS_LOADER_EXPORT___.push([module.id, "\n.dialog-box[data-v-deb7c55e] {\n    width: 30%;\n    height: 70%;\n    background-color: white;\n    border: 1px solid #ccc;\n    box-shadow: 0 1px 5px rgba(0, 0, 0, .2);\n    position: fixed;\n    z-index: 9999;\n    color: #666;\n    /* TODO: there's got to be a better way to do this */\n    margin-top: -210px;\n    margin-left: -210px;\n    left: 50%;\n    top: 50%;\n}\n.dialog-box .dialog-title[data-v-deb7c55e] {\n    margin: 0;\n    font: inherit;\n    color: inherit;\n    font-weight: bold;\n    height: 2em;\n    line-height: 2em;\n    overflow: hidden;\n    padding: 0 .8em;\n    background-color: #eee;\n    cursor: move;\n}\n.dialog-box .dialog-content[data-v-deb7c55e] {\n    border-top: 1px solid #ccc;\n    padding: 1em;\n    position: absolute;\n    top: 2em;\n    right: 0;\n    bottom: 3em;\n    left: 0;\n    overflow: auto;\n}\n.dialog-box .dialog-content iframe[data-v-deb7c55e] {\n    display: block;\n    border: none;\n    background: none;\n    margin: 0;\n    padding: 0;\n    overflow: auto;\n    width: 100%;\n    height: 100%;\n}\n.dialog-box .dialog-action[data-v-deb7c55e] {\n    position: absolute;\n    right: 0;\n    bottom: 0;\n    left: 0;\n    height: 2em;\n    padding: .5em;\n    background-color: #eee;\n    border-top: 1px solid #ccc;\n    text-align: right;\n}\n.dialog-box .dialog-action .btn[data-v-deb7c55e] {\n    text-decoration: none;\n    outline: none;\n    color: inherit;\n    font-weight: bold;\n    background-color: white;\n    border: 1px solid #ccc;\n    border-radius: .2em;\n    padding: .4em 1em;\n    margin-left: .2em;\n    line-height: 2em;\n    cursor: pointer;\n}\n.dialog-box .dialog-close[data-v-deb7c55e], .dialog-box .dialog-minmax[data-v-deb7c55e] {\n    border: none;\n    outline: none;\n    background: none;\n    font: inherit;\n    font-family: Arial, SansSerif;\n    font-style: normal;\n    font-weight: bold;\n    font-size: 150%;\n    line-height: 1.4em;\n    color: #aaa;\n    text-decoration: none;\n    position: absolute;\n    top: 0;\n    right: .3em;\n    text-align: center;\n    cursor: pointer;\n}\n.dialog-box .dialog-minmax[data-v-deb7c55e] {\n    right: 1.5em;\n}\n.dialog-box .dialog-close[data-v-deb7c55e]:focus,\n.dialog-box .dialog-minmax[data-v-deb7c55e]:focus,\n.dialog-box .dialog-action .btn[data-v-deb7c55e]:focus {\n    border-width: 0;\n    outline: none;\n}\n.dialog-box .dialog-close[data-v-deb7c55e]:hover, .dialog-box .dialog-minmax[data-v-deb7c55e]:hover {\n    color: #777;\n}\n.dialog-box .dialog-close[data-v-deb7c55e]:focus, .dialog-box .dialog-minmax[data-v-deb7c55e]:focus {\n    color: #c90000;\n}\n.dialog-box .dialog-close[data-v-deb7c55e]:active, .dialog-box .dialog-minmax[data-v-deb7c55e]:active {\n    color: #444;\n}\n.dialog-box + .dialog-box-overlay[data-v-deb7c55e] {\n    background-color: black;\n    opacity: .2;\n    filter: alpha(opacity=20);\n    position: fixed;\n    top: 0;\n    right: 0;\n    bottom: 0;\n    left: 0;\n    z-index: 9997;\n}\n#content-error[data-v-deb7c55e] {\n    font-size: 16px;\n}\n", ""]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/PaginationButtons.vue?vue&type=style&index=0&id=88f11fa8&scoped=true&lang=css&":
+/*!********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/PaginationButtons.vue?vue&type=style&index=0&id=88f11fa8&scoped=true&lang=css& ***!
+  \********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0__);
+// Imports
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, "\n.pagination-buttons[data-v-88f11fa8] {\n    text-align: center;\n    margin: 0 auto;\n    width: 25%;\n}\n.pagination-buttons span[data-v-88f11fa8] {\n    display: flex;\n    justify-content: space-between;\n}\na[data-v-88f11fa8] {\n    cursor: pointer;\n    color: #696868;\n}\n.selected[data-v-88f11fa8] {\n    font-weight: bold;\n    color: black;\n}\n.disabled[data-v-88f11fa8] {\n    cursor: not-allowed;\n    color: lightgrey;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -19985,6 +20109,36 @@ var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js
 
 /***/ }),
 
+/***/ "./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/PaginationButtons.vue?vue&type=style&index=0&id=88f11fa8&scoped=true&lang=css&":
+/*!************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/PaginationButtons.vue?vue&type=style&index=0&id=88f11fa8&scoped=true&lang=css& ***!
+  \************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_PaginationButtons_vue_vue_type_style_index_0_id_88f11fa8_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !!../../../node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./PaginationButtons.vue?vue&type=style&index=0&id=88f11fa8&scoped=true&lang=css& */ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/PaginationButtons.vue?vue&type=style&index=0&id=88f11fa8&scoped=true&lang=css&");
+
+            
+
+var options = {};
+
+options.insert = "head";
+options.singleton = false;
+
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_PaginationButtons_vue_vue_type_style_index_0_id_88f11fa8_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_1__.default, options);
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_PaginationButtons_vue_vue_type_style_index_0_id_88f11fa8_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_1__.default.locals || {});
+
+/***/ }),
+
 /***/ "./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Post.vue?vue&type=style&index=0&id=5e8280ea&scoped=true&lang=css&":
 /*!***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Post.vue?vue&type=style&index=0&id=5e8280ea&scoped=true&lang=css& ***!
@@ -20406,6 +20560,47 @@ component.options.__file = "resources/js/components/CommentsViewer.vue"
 
 /***/ }),
 
+/***/ "./resources/js/components/PaginationButtons.vue":
+/*!*******************************************************!*\
+  !*** ./resources/js/components/PaginationButtons.vue ***!
+  \*******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _PaginationButtons_vue_vue_type_template_id_88f11fa8_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./PaginationButtons.vue?vue&type=template&id=88f11fa8&scoped=true& */ "./resources/js/components/PaginationButtons.vue?vue&type=template&id=88f11fa8&scoped=true&");
+/* harmony import */ var _PaginationButtons_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./PaginationButtons.vue?vue&type=script&lang=js& */ "./resources/js/components/PaginationButtons.vue?vue&type=script&lang=js&");
+/* harmony import */ var _PaginationButtons_vue_vue_type_style_index_0_id_88f11fa8_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./PaginationButtons.vue?vue&type=style&index=0&id=88f11fa8&scoped=true&lang=css& */ "./resources/js/components/PaginationButtons.vue?vue&type=style&index=0&id=88f11fa8&scoped=true&lang=css&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+;
+
+
+/* normalize component */
+
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__.default)(
+  _PaginationButtons_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__.default,
+  _PaginationButtons_vue_vue_type_template_id_88f11fa8_scoped_true___WEBPACK_IMPORTED_MODULE_0__.render,
+  _PaginationButtons_vue_vue_type_template_id_88f11fa8_scoped_true___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  "88f11fa8",
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/PaginationButtons.vue"
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
+
+/***/ }),
+
 /***/ "./resources/js/components/Post.vue":
 /*!******************************************!*\
   !*** ./resources/js/components/Post.vue ***!
@@ -20520,6 +20715,22 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/PaginationButtons.vue?vue&type=script&lang=js&":
+/*!********************************************************************************!*\
+  !*** ./resources/js/components/PaginationButtons.vue?vue&type=script&lang=js& ***!
+  \********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_PaginationButtons_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./PaginationButtons.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/PaginationButtons.vue?vue&type=script&lang=js&");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_PaginationButtons_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__.default); 
+
+/***/ }),
+
 /***/ "./resources/js/components/Post.vue?vue&type=script&lang=js&":
 /*!*******************************************************************!*\
   !*** ./resources/js/components/Post.vue?vue&type=script&lang=js& ***!
@@ -20574,6 +20785,19 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_style_loader_dist_cjs_js_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_CommentsViewer_vue_vue_type_style_index_0_id_deb7c55e_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/style-loader/dist/cjs.js!../../../node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./CommentsViewer.vue?vue&type=style&index=0&id=deb7c55e&scoped=true&lang=css& */ "./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/CommentsViewer.vue?vue&type=style&index=0&id=deb7c55e&scoped=true&lang=css&");
+
+
+/***/ }),
+
+/***/ "./resources/js/components/PaginationButtons.vue?vue&type=style&index=0&id=88f11fa8&scoped=true&lang=css&":
+/*!****************************************************************************************************************!*\
+  !*** ./resources/js/components/PaginationButtons.vue?vue&type=style&index=0&id=88f11fa8&scoped=true&lang=css& ***!
+  \****************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_style_loader_dist_cjs_js_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_PaginationButtons_vue_vue_type_style_index_0_id_88f11fa8_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/style-loader/dist/cjs.js!../../../node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./PaginationButtons.vue?vue&type=style&index=0&id=88f11fa8&scoped=true&lang=css& */ "./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/PaginationButtons.vue?vue&type=style&index=0&id=88f11fa8&scoped=true&lang=css&");
 
 
 /***/ }),
@@ -20634,6 +20858,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CommentsViewer_vue_vue_type_template_id_deb7c55e_scoped_true___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
 /* harmony export */ });
 /* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CommentsViewer_vue_vue_type_template_id_deb7c55e_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./CommentsViewer.vue?vue&type=template&id=deb7c55e&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/CommentsViewer.vue?vue&type=template&id=deb7c55e&scoped=true&");
+
+
+/***/ }),
+
+/***/ "./resources/js/components/PaginationButtons.vue?vue&type=template&id=88f11fa8&scoped=true&":
+/*!**************************************************************************************************!*\
+  !*** ./resources/js/components/PaginationButtons.vue?vue&type=template&id=88f11fa8&scoped=true& ***!
+  \**************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_PaginationButtons_vue_vue_type_template_id_88f11fa8_scoped_true___WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_PaginationButtons_vue_vue_type_template_id_88f11fa8_scoped_true___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */ });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_PaginationButtons_vue_vue_type_template_id_88f11fa8_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./PaginationButtons.vue?vue&type=template&id=88f11fa8&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/PaginationButtons.vue?vue&type=template&id=88f11fa8&scoped=true&");
 
 
 /***/ }),
@@ -20814,6 +21055,94 @@ render._withStripped = true
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/PaginationButtons.vue?vue&type=template&id=88f11fa8&scoped=true&":
+/*!*****************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/PaginationButtons.vue?vue&type=template&id=88f11fa8&scoped=true& ***!
+  \*****************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render),
+/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "pagination-buttons" }, [
+    _c(
+      "span",
+      [
+        _c(
+          "a",
+          {
+            on: {
+              click: function($event) {
+                return _vm.onPageClick(_vm.pages[0])
+              }
+            }
+          },
+          [_vm._v("First")]
+        ),
+        _vm._v(" "),
+        _c(
+          "a",
+          {
+            class: { disabled: _vm.disablePreviousButton },
+            on: { click: _vm.onPreviousPageClick }
+          },
+          [_vm._v("Previous")]
+        ),
+        _vm._v(" "),
+        _vm._l(_vm.pages, function(page) {
+          return _c(
+            "a",
+            {
+              class: { selected: _vm.current === page },
+              on: {
+                click: function($event) {
+                  return _vm.onPageClick(page)
+                }
+              }
+            },
+            [_vm._v("\n            " + _vm._s(page) + "\n        ")]
+          )
+        }),
+        _vm._v(" "),
+        _c(
+          "a",
+          {
+            class: { disabled: _vm.disableNextButton },
+            on: { click: _vm.onNextPageClick }
+          },
+          [_vm._v("Next")]
+        ),
+        _vm._v(" "),
+        _c(
+          "a",
+          {
+            on: {
+              click: function($event) {
+                return _vm.onPageClick(_vm.pages[_vm.pages.length - 1])
+              }
+            }
+          },
+          [_vm._v("Last")]
+        )
+      ],
+      2
+    )
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Post.vue?vue&type=template&id=5e8280ea&scoped=true&":
 /*!****************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Post.vue?vue&type=template&id=5e8280ea&scoped=true& ***!
@@ -20925,6 +21254,11 @@ var render = function() {
               1
             )
       ]),
+      _vm._v(" "),
+      _c("pagination-buttons", {
+        attrs: { current: _vm.currentPage, "page-count": _vm.totalPages },
+        on: { "pagination-buttons:page-click": _vm.onPageClick }
+      }),
       _vm._v(" "),
       _c("comments-viewer", {
         attrs: {

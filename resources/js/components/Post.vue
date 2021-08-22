@@ -30,7 +30,7 @@ export default {
     props: ['post'],
     data() {
         return {
-            collapsed: false,
+            collapsed: true,
         }
     },
     methods: {

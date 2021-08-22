@@ -13,6 +13,12 @@
             </div>
         </div>
 
+        <pagination-buttons
+            :current="currentPage"
+            :page-count="totalPages"
+            @pagination-buttons:page-click="onPageClick"
+        ></pagination-buttons>
+
         <comments-viewer
             :show="showCommentsViewer"
             :comments="comments"
@@ -47,10 +53,11 @@
 <script>
 import Post from "./Post"
 import CommentsViewer from "./CommentsViewer";
+import PaginationButtons from "./PaginationButtons";
 
 export default {
     name: "PostsPage",
-    components: { Post, CommentsViewer },
+    components: { Post, CommentsViewer, PaginationButtons },
     data() {
         return {
             posts: [],
@@ -65,6 +72,10 @@ export default {
                 title: '',
                 content: '',
             },
+            currentPage: 1,
+            totalPages: 0,
+            totalPosts: 0,
+            postCount: 5, // The number of posts per page
         }
     },
     computed: {
@@ -88,6 +99,10 @@ export default {
         },
     },
     methods: {
+        onPageClick(page) {
+            this.currentPage = page
+            this.getPostsPage()
+        },
         onCreatePostLinkClick() {
             this.showPostForm = !this.showPostForm
         },
@@ -122,12 +137,10 @@ export default {
 
             this.loading = true
 
-            let payload = { title: this.title, content: this.content, }
-
-            axios.post('/home', payload)
+            axios.post('/home', { title: this.title, content: this.content, })
                 .then((res) => {
-                    console.log("POST", res.data.post)
-                    this.posts.push(res.data.post)
+                    // Update the current page of posts
+                    this.getPostsPage()
 
                     // Clear form
                     this.title = ''
@@ -158,22 +171,24 @@ export default {
             this.selectedPostId = postId
             this.showCommentsViewer = true
         },
+        getPostsPage() {
+            this.loading = true
+
+            axios.get(`/home/get_posts/${this.currentPage - 1}/${this.postCount}`)
+                .then((res) => {
+                    this.posts.splice(0, this.posts.length, ...res.data.posts)
+                    this.totalPosts = res.data.total
+                    this.totalPages = Math.ceil(this.totalPosts / this.postCount)
+                })
+                .catch((err) => {
+                    console.error(err)
+                    this.errorMessage = `Failed to fetch posts: ${err}`
+                })
+                .finally(() => this.loading  = false)
+        },
     },
     mounted() {
-        this.loading = true
-
-        axios.get('/home/get_posts')
-            .then((res) => {
-                this.posts = res.data
-
-                // Auto select first post
-                this.selectedPostId = this.posts[0].id || null
-            })
-            .catch((err) => {
-                console.error(err)
-                this.errorMessage = `Failed to fetch posts: ${err}`
-            })
-            .finally(() => this.loading = false)
+        this.getPostsPage()
     },
 }
 </script>
