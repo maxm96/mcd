@@ -17,11 +17,18 @@ class HomeController extends Controller
 
     public function getPosts($page = 0, $count = 5)
     {
-        return Post::with('comments')
-            ->skip($page)
+        $posts = Post::with('comments')
+            ->skip($page * $count)
             ->take($count)
             ->get()
             ->all();
+
+        $total = Post::all()->count();
+
+        return [
+            'posts' => $posts,
+            'total' => $total,
+        ];
     }
 
     public function submitPost(PostRequest $request)

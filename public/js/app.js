@@ -2247,7 +2247,11 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         title: '',
         content: ''
       },
-      currentPage: 1
+      currentPage: 1,
+      totalPages: 0,
+      totalPosts: 0,
+      postCount: 5 // The number of posts per page
+
     };
   },
   computed: {
@@ -2275,7 +2279,21 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
   },
   methods: {
     onPageClick: function onPageClick(page) {
+      var _this2 = this;
+
+      this.loading = true;
       this.currentPage = page;
+      axios.get("/home/get_posts/".concat(this.currentPage - 1, "/").concat(this.postCount)).then(function (res) {
+        var _this2$posts;
+
+        (_this2$posts = _this2.posts).splice.apply(_this2$posts, [0, _this2.posts.length].concat(_toConsumableArray(res.data.posts)));
+
+        _this2.totalPosts = res.data.total;
+      })["catch"](function (err) {
+        console.error(err);
+      })["finally"](function () {
+        return _this2.loading = false;
+      });
     },
     onCreatePostLinkClick: function onCreatePostLinkClick() {
       this.showPostForm = !this.showPostForm;
@@ -2303,7 +2321,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       return pass;
     },
     onSubmitClick: function onSubmitClick() {
-      var _this2 = this;
+      var _this3 = this;
 
       if (!this.validatePost()) {
         return;
@@ -2317,26 +2335,26 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       axios.post('/home', payload).then(function (res) {
         console.log("POST", res.data.post);
 
-        _this2.posts.push(res.data.post); // Clear form
+        _this3.posts.push(res.data.post); // Clear form
 
 
-        _this2.title = '';
-        _this2.content = ''; // Hide form
+        _this3.title = '';
+        _this3.content = ''; // Hide form
 
-        _this2.showPostForm = false;
+        _this3.showPostForm = false;
       })["catch"](function (err) {
         console.error(err);
-        _this2.errorMessage = "Failed to save post: ".concat(err);
+        _this3.errorMessage = "Failed to save post: ".concat(err);
       })["finally"](function () {
-        return _this2.loading = false;
+        return _this3.loading = false;
       });
     },
     onCommentsUpdated: function onCommentsUpdated(comments) {
-      var _this3 = this,
+      var _this4 = this,
           _this$posts$postIndex;
 
       var postIndex = this.posts.findIndex(function (p) {
-        return p.id === _this3.selectedPostId;
+        return p.id === _this4.selectedPostId;
       });
 
       if (postIndex < 0) {
@@ -2355,18 +2373,20 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     }
   },
   mounted: function mounted() {
-    var _this4 = this;
+    var _this5 = this;
 
     this.loading = true;
-    axios.get('/home/get_posts').then(function (res) {
-      _this4.posts = res.data; // Auto select first post
+    axios.get("/home/get_posts/".concat(this.currentPage - 1, "/").concat(this.postCount)).then(function (res) {
+      _this5.posts = res.data.posts;
+      _this5.totalPosts = res.data.total;
+      _this5.totalPages = Math.ceil(_this5.totalPosts / _this5.postCount); // Auto select first post
 
-      _this4.selectedPostId = _this4.posts[0].id || null;
+      _this5.selectedPostId = _this5.posts[0].id || null;
     })["catch"](function (err) {
       console.error(err);
-      _this4.errorMessage = "Failed to fetch posts: ".concat(err);
+      _this5.errorMessage = "Failed to fetch posts: ".concat(err);
     })["finally"](function () {
-      return _this4.loading = false;
+      return _this5.loading = false;
     });
   }
 });
@@ -21247,7 +21267,7 @@ var render = function() {
       ]),
       _vm._v(" "),
       _c("pagination-buttons", {
-        attrs: { current: _vm.currentPage, "page-count": 5 },
+        attrs: { current: _vm.currentPage, "page-count": _vm.totalPages },
         on: { "pagination-buttons:page-click": _vm.onPageClick }
       }),
       _vm._v(" "),
