@@ -137,12 +137,10 @@ export default {
 
             this.loading = true
 
-            let payload = { title: this.title, content: this.content, }
-
-            axios.post('/home', payload)
+            axios.post('/home', { title: this.title, content: this.content, })
                 .then((res) => {
-                    console.log("POST", res.data.post)
-                    this.posts.push(res.data.post)
+                    // Update the current page of posts
+                    this.getPostsPage()
 
                     // Clear form
                     this.title = ''

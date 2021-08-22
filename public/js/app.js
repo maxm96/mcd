@@ -2315,14 +2315,12 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       }
 
       this.loading = true;
-      var payload = {
+      axios.post('/home', {
         title: this.title,
         content: this.content
-      };
-      axios.post('/home', payload).then(function (res) {
-        console.log("POST", res.data.post);
-
-        _this2.posts.push(res.data.post); // Clear form
+      }).then(function (res) {
+        // Update the current page of posts
+        _this2.getPostsPage(); // Clear form
 
 
         _this2.title = '';
