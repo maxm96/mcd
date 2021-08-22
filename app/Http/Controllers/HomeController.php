@@ -15,9 +15,13 @@ class HomeController extends Controller
         return view('home');
     }
 
-    public function getPosts()
+    public function getPosts($page = 0, $count = 5)
     {
-        return Post::with('comments')->get()->all();
+        return Post::with('comments')
+            ->skip($page)
+            ->take($count)
+            ->get()
+            ->all();
     }
 
     public function submitPost(PostRequest $request)

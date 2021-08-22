@@ -13,6 +13,12 @@
             </div>
         </div>
 
+        <pagination-buttons
+            :current="currentPage"
+            :page-count="5"
+            @pagination-buttons:page-click="onPageClick"
+        ></pagination-buttons>
+
         <comments-viewer
             :show="showCommentsViewer"
             :comments="comments"
@@ -47,10 +53,11 @@
 <script>
 import Post from "./Post"
 import CommentsViewer from "./CommentsViewer";
+import PaginationButtons from "./PaginationButtons";
 
 export default {
     name: "PostsPage",
-    components: { Post, CommentsViewer },
+    components: { Post, CommentsViewer, PaginationButtons },
     data() {
         return {
             posts: [],
@@ -65,6 +72,7 @@ export default {
                 title: '',
                 content: '',
             },
+            currentPage: 1,
         }
     },
     computed: {
@@ -88,6 +96,9 @@ export default {
         },
     },
     methods: {
+        onPageClick(page) {
+            this.currentPage = page
+        },
         onCreatePostLinkClick() {
             this.showPostForm = !this.showPostForm
         },
