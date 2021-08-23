@@ -2125,6 +2125,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "Post",
   props: ['post'],
@@ -2139,6 +2140,11 @@ __webpack_require__.r(__webpack_exports__);
     },
     onShowCommentsClick: function onShowCommentsClick() {
       this.$emit('post:show-comments-click', this.post.id);
+    }
+  },
+  filters: {
+    date: function date(val) {
+      return new Date(val).toDateString();
     }
   }
 });
@@ -2523,7 +2529,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.post[data-v-5e8280ea] {\n    text-align: left;\n    width: 20%;\n    margin: 10px auto;\n    background-color: lightgrey;\n    border-radius: 5px;\n    padding: 5px;\n}\n.post-title[data-v-5e8280ea], .post-content[data-v-5e8280ea] {\n    overflow-wrap: break-word;\n}\n.collapse[data-v-5e8280ea], .expand[data-v-5e8280ea] {\n    float: right;\n    margin-bottom: -20px;\n}\n.collapse > a[data-v-5e8280ea], .expand > a[data-v-5e8280ea] {\n    cursor: pointer;\n}\n.show-comments-link[data-v-5e8280ea] {\n    cursor: pointer;\n    float: right;\n    font-size: 14px;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.post[data-v-5e8280ea] {\n    text-align: left;\n    width: 20%;\n    margin: 10px auto;\n    background-color: lightgrey;\n    border-radius: 5px;\n    padding: 5px;\n}\n.post-title[data-v-5e8280ea], .post-content[data-v-5e8280ea] {\n    overflow-wrap: break-word;\n}\n.collapse[data-v-5e8280ea], .expand[data-v-5e8280ea] {\n    float: right;\n    margin-bottom: -20px;\n}\n.collapse > a[data-v-5e8280ea], .expand > a[data-v-5e8280ea] {\n    cursor: pointer;\n}\n.show-comments-link[data-v-5e8280ea] {\n    cursor: pointer;\n    float: right;\n    font-size: 14px;\n}\n.updated-at[data-v-5e8280ea] {\n    font-size: 14px;\n    font-weight: lighter;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -21193,7 +21199,11 @@ var render = function() {
           _vm._v(" "),
           _c("hr"),
           _vm._v(" "),
-          _c("span", [_vm._v("Submitted by: " + _vm._s(_vm.post.author))]),
+          _c("span", [_vm._v(_vm._s(_vm.post.author))]),
+          _vm._v(" |\n        "),
+          _c("span", { staticClass: "updated-at" }, [
+            _vm._v(_vm._s(_vm._f("date")(_vm.post.updated_at)))
+          ]),
           _vm._v(" "),
           _c(
             "a",

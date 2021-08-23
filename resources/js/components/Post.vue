@@ -17,7 +17,8 @@
             <h4 class="post-title">{{ post.title }}</h4>
             <p class="post-content">{{ post.content }}</p>
             <hr>
-            <span>Submitted by: {{ post.author }}</span>
+            <span>{{ post.author }}</span> |
+            <span class="updated-at">{{ post.updated_at | date }}</span>
             <a class="show-comments-link" @click="onShowCommentsClick">Show comments</a>
         </div>
 
@@ -39,6 +40,11 @@ export default {
         },
         onShowCommentsClick() {
             this.$emit('post:show-comments-click', this.post.id)
+        },
+    },
+    filters: {
+        date(val) {
+            return new Date(val).toDateString()
         },
     },
 }
@@ -71,5 +77,10 @@ export default {
     cursor: pointer;
     float: right;
     font-size: 14px;
+}
+
+.updated-at {
+    font-size: 14px;
+    font-weight: lighter;
 }
 </style>

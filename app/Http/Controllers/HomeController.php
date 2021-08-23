@@ -20,6 +20,7 @@ class HomeController extends Controller
         $posts = Post::with('comments')
             ->skip($page * $count)
             ->take($count)
+            ->orderBy('created_at', 'desc')
             ->get()
             ->all();
 
