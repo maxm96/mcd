@@ -2039,8 +2039,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "PaginationButtons",
   props: ['current', 'pageCount'],
@@ -2505,7 +2503,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.pagination-buttons[data-v-88f11fa8] {\n    text-align: center;\n    margin: 0 auto;\n    width: 25%;\n}\n.pagination-buttons span[data-v-88f11fa8] {\n    display: flex;\n    justify-content: space-between;\n}\na[data-v-88f11fa8] {\n    cursor: pointer;\n    color: #696868;\n}\n.selected[data-v-88f11fa8] {\n    font-weight: bold;\n    color: black;\n}\n.disabled[data-v-88f11fa8] {\n    cursor: not-allowed;\n    color: lightgrey;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.pagination-buttons[data-v-88f11fa8] {\n    text-align: center;\n    margin: 0 auto;\n    width: 20%;\n}\n.pagination-buttons span[data-v-88f11fa8] {\n    display: flex;\n    justify-content: space-between;\n}\na[data-v-88f11fa8] {\n    cursor: pointer;\n    color: #696868;\n}\n.selected[data-v-88f11fa8] {\n    font-weight: bold;\n    color: black;\n}\n.disabled[data-v-88f11fa8] {\n    cursor: not-allowed;\n    color: lightgrey;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -21084,18 +21082,6 @@ var render = function() {
         _c(
           "a",
           {
-            on: {
-              click: function($event) {
-                return _vm.onPageClick(_vm.pages[0])
-              }
-            }
-          },
-          [_vm._v("First")]
-        ),
-        _vm._v(" "),
-        _c(
-          "a",
-          {
             class: { disabled: _vm.disablePreviousButton },
             on: { click: _vm.onPreviousPageClick }
           },
@@ -21124,18 +21110,6 @@ var render = function() {
             on: { click: _vm.onNextPageClick }
           },
           [_vm._v("Next")]
-        ),
-        _vm._v(" "),
-        _c(
-          "a",
-          {
-            on: {
-              click: function($event) {
-                return _vm.onPageClick(_vm.pages[_vm.pages.length - 1])
-              }
-            }
-          },
-          [_vm._v("Last")]
         )
       ],
       2

@@ -1,7 +1,6 @@
 <template>
     <div class="pagination-buttons">
         <span>
-            <a @click="onPageClick(pages[0])">First</a>
             <a @click="onPreviousPageClick" :class="{ disabled: disablePreviousButton }">Previous</a>
 
             <a
@@ -13,7 +12,6 @@
             </a>
 
             <a @click="onNextPageClick" :class="{ disabled: disableNextButton }">Next</a>
-            <a @click="onPageClick(pages[pages.length - 1])">Last</a>
         </span>
     </div>
 </template>
@@ -67,7 +65,7 @@ export default {
 .pagination-buttons {
     text-align: center;
     margin: 0 auto;
-    width: 25%;
+    width: 20%;
 }
 
 .pagination-buttons span {
