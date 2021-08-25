@@ -1,7 +1,7 @@
 require('./bootstrap')
 import Vue from 'vue'
 
-import PostsPage from "./components/PostsPage";
+import PostsPage from "./components/PostsPage/PostsPage";
 
 Vue.component('posts-page', PostsPage)
 
