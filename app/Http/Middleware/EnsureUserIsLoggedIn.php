@@ -18,7 +18,7 @@ class EnsureUserIsLoggedIn
     public function handle(Request $request, Closure $next)
     {
         if (!Auth::check()) {
-            return redirect('login');
+            return redirect('login')->with('info', 'Please log in to continue.');
         }
 
         return $next($request);
