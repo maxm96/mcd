@@ -27,7 +27,7 @@ Route::post('/home', [HomeController::class, 'submitPost'])
 Route::post('/home/comment', [HomeController::class, 'submitComment'])->name('home.submit_comment');
 
 Route::group(['middleware' => 'user-is-logged-in'], function () {
-    Route::get('/chat', [ChatController::class, 'index'])->name('chat')->middleware('user-is-logged-in');
+    Route::get('/chat', [ChatController::class, 'index'])->name('chat');
     Route::post('/chat', [ChatController::class, 'postChat'])->name('chat.post');
 });
 
