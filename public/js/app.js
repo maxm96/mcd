@@ -1851,8 +1851,36 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  name: "ChatPage"
+  name: "ChatPage",
+  data: function data() {
+    return {
+      content: ''
+    };
+  },
+  methods: {
+    onSubmit: function onSubmit() {
+      var _this = this;
+
+      axios.post('/chat', {
+        content: this.content
+      }).then(console.log)["catch"](console.error)["finally"](function () {
+        _this.content = '';
+      });
+    }
+  },
+  mounted: function mounted() {
+    Echo.join('chat-room').here(function (users) {
+      console.log('HERE', users);
+    }).joining(function (user) {
+      console.log('JOINING', user);
+    }).leaving(function (user) {
+      console.log('LEAVING', user);
+    }).error(console.error).listen('ChatSent', function (e) {
+      console.log('ChatSent', e);
+    });
+  }
 });
 
 /***/ }),
@@ -27190,7 +27218,30 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { attrs: { id: "chat-page" } }, [
-    _vm._v("\n    Hello World!\n")
+    _c("input", {
+      directives: [
+        {
+          name: "model",
+          rawName: "v-model",
+          value: _vm.content,
+          expression: "content"
+        }
+      ],
+      attrs: { id: "content", type: "text", placeholder: "" },
+      domProps: { value: _vm.content },
+      on: {
+        input: function($event) {
+          if ($event.target.composing) {
+            return
+          }
+          _vm.content = $event.target.value
+        }
+      }
+    }),
+    _vm._v(" "),
+    _c("button", { attrs: { type: "button" }, on: { click: _vm.onSubmit } }, [
+      _vm._v("Submit")
+    ])
   ])
 }
 var staticRenderFns = []
