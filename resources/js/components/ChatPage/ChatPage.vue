@@ -1,16 +1,23 @@
 <template>
     <div id="chat-page">
+        <user-list :users="users"></user-list>
+
         <input v-model="content" id="content" type="text" placeholder="">
         <button type="button" @click="onSubmit">Submit</button>
     </div>
 </template>
 
 <script>
+import UserList from "./UserList";
+
 export default {
     name: "ChatPage",
+    components: { UserList },
     data() {
         return {
             content: '',
+            users: [],
+            chats: [],
         }
     },
     methods: {
@@ -26,13 +33,13 @@ export default {
     mounted() {
         Echo.join('chat-room')
             .here((users) => {
-                console.log('HERE', users)
+                this.users = users
             })
             .joining((user) => {
-                console.log('JOINING', user)
+                this.users.push(user)
             })
             .leaving((user) => {
-                console.log('LEAVING', user)
+                this.users = this.users.filter(u => u.id !== user.id)
             })
             .error(console.error)
             .listen('ChatSent', (e) => {
