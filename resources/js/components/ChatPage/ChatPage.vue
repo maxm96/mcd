@@ -1,33 +1,32 @@
 <template>
     <div id="chat-page">
         <user-list :users="users"></user-list>
-
-        <input v-model="content" id="content" type="text" placeholder="">
-        <button type="button" @click="onSubmit">Submit</button>
+        <chats-list
+            :chats="chats"
+            :users="users"
+            @chats-list:send-chat="onSendChat"
+        ></chats-list>
     </div>
 </template>
 
 <script>
 import UserList from "./UserList";
+import ChatsList from "./ChatsList";
 
 export default {
     name: "ChatPage",
-    components: { UserList },
+    components: { UserList, ChatsList },
     data() {
         return {
-            content: '',
             users: [],
             chats: [],
         }
     },
     methods: {
-        onSubmit() {
-            axios.post('/chat', { content: this.content })
+        onSendChat(content) {
+            axios.post('/chat', { content: content })
                 .then(console.log)
                 .catch(console.error)
-                .finally(() => {
-                    this.content = ''
-                })
         },
     },
     mounted() {
@@ -43,12 +42,15 @@ export default {
             })
             .error(console.error)
             .listen('ChatSent', (e) => {
-                console.log('ChatSent', e)
+                this.chats.push(e.chat)
             })
     },
 }
 </script>
 
 <style scoped>
-
+#chat-page {
+    display: flex;
+    height: 500px;
+}
 </style>
