@@ -94,3 +94,8 @@ span.bar-link, .menu-link {
     background-color: #f4bdbd;
     color: #4a4a4a;
 }
+
+.alert-info {
+    background-color: #a2e2ec;
+    color: #4a4a4a;
+}

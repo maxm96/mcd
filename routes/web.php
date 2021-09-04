@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ChatController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,9 +26,10 @@ Route::post('/home', [HomeController::class, 'submitPost'])
     ->withoutMiddleware('auth');
 Route::post('/home/comment', [HomeController::class, 'submitComment'])->name('home.submit_comment');
 
-Route::get('/chat', function () {
-    return 'Chat';
-})->name('chat');
+Route::group(['middleware' => 'user-is-logged-in'], function () {
+    Route::get('/chat', [ChatController::class, 'index'])->name('chat');
+    Route::post('/chat', [ChatController::class, 'postChat'])->name('chat.post');
+});
 
 Route::get('/boards', function () {
     return 'Boards';
